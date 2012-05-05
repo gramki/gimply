@@ -1,13 +1,19 @@
 {
-    "content_scripts": [
+    "content_scripts":[
         {
-            "matches": ["https://github.com/*"],
-            "js": ["js/lib/jquery-171.js", "js/github_content.js"],
-            "run_at": "document_end"
+            "matches":["https://github.com/*"],
+            "js":[
+                "js/lib/jquery-171.js",
+                "js/lib/underscore-min.js",
+                "js/github_content.js"],
+            "run_at":"document_end"
         }
     ],
-    "description": "Updates from a Git Project",
-    "name": "Gimply",
-    "permissions":["*://github.com/", "unlimitedStorage", "notifications"],
-    "version": "0.0.1"
+    "background":{
+        "page":"index.html"
+    },
+    "description":"Updates from a Git Project",
+    "name":"Gimply",
+    "permissions":["https://api.github.com/", "unlimitedStorage", "notifications"],
+    "version":"0.0.1"
 }
