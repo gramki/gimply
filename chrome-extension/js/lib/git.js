@@ -100,7 +100,7 @@ Repository.prototype.fetchEvents = function () {
 
 Repository.prototype.addContributor = function(contributor){
     this.contributors[contributor.login] = contributor;
-    this.github.raise("contributor", [contributor]);
+    this.github.raise("contributor", [contributor, this.name]);
 };
 
 Repository.prototype.fetchContributors = function(){
