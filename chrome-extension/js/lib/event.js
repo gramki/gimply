@@ -7,7 +7,7 @@ event_mixin = {
         if(!this._eh[name]){
             this._eh[name] = [];
         }
-        this._eh[name].push = handler;
+        this._eh[name].push(handler);
     },
     off: function(name, handler){
         var arr = this._eh && this._eh[name];
