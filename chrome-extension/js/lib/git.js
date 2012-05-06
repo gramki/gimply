@@ -73,6 +73,13 @@ Repository.prototype.addEvent = function (event) {
     var index = _.chain(this.events).pluck('created_at').sortedIndex(event.created_at).value();
     this.events.splice(index, 0, event);
     this.eventsById[event.id] = event;
+
+    if(event.actor && this.contributors[event.actor.login]){
+        var contributor = this.contributors[event.actor.login];
+        if(contributor && ((contributor.latest_update_at||0) < event.created_at)){
+            contributor.latest_update_at = event.created_at;
+        }
+    }
     this.github.raise(event.type, [event]);
     console.warn("Added event: ", event);
     return true;
