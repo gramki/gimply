@@ -87,6 +87,11 @@ Repository.prototype.addEvent = function (event) {
             contributor.latest_update_at = event.created_at;
         }
     }
+    switch(event.type){
+        case "IssuesEvent":
+            this.fetchIssue(event.payload.issue.number);
+            break;
+    }
     this.github.raise(event.type, [event, this.name]);
     console.warn("Added event: ", event);
     return true;
