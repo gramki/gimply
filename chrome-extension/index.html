@@ -8,24 +8,34 @@
 <script type="text/javascript">
     "use strict";
     var $git = new Github();
-    $git.setAccessToken("3fd0db047bcbed22e09d5409f9d0f664e58dcf##");
+    $git.setAccessToken("3fd0db047bcbed22e09d5409f9d0f664e58dcfa1");
 
     var openPorts = [];
-    chrome.extension.onConnect.addListener(function(port){
+    chrome.extension.onConnect.addListener(function (port) {
         var repository = $git.addRepository(port.name);
-        var oneHour = 60*60*1000;
-        if(((new Date()) - repository.lastFetchTime) > oneHour){
-            $git.fetchEvents(port.name);
+        var oneHour = 60 * 60 * 1000;
+        if (((new Date()) - repository.lastFetchTime) > oneHour) {
+            repository.fetchEvents();
         }
-        port.onDisconnect.addListener(function(){
+        port.onDisconnect.addListener(function () {
             openPorts = _(openPorts).without(port);
         });
-        port.onMessage.addListener(function(request){
+        port.onMessage.addListener(function (request) {
             switch (request.type) {
                 case "fetchEvents":
-                    $git.fetchEvents(port.name);
-                    port.postMessage({type: "events", events: $git.repository[port.name].events});
+                    repository.fetchEvents();
+                    port.postMessage({type:"events", events:repository.events});
                     break;
+                case "fetchContributors":
+                    port.postMessage({type:"contributors", contributors:repository.contributors});
+                    break;
+            }
+        });
+    });
+    $git.on("contributor", function (contributor, repoName) {
+        _(openPorts).each(function (port) {
+            if (port.name === repoName) {
+                port.postMessage({type:"contributor", contributor:contributor});
             }
         });
     });

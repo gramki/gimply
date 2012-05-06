@@ -1,9 +1,18 @@
+"use strict";
+
 function gimply() {
     this.init_events();
     this.init_ui();
 }
 
 gimply.prototype.showUpdates = function () {
+    this._removeGithubElements();
+    this.contributors = new ListWidget("contributors", "#gimply_updates_container");
+    this.updates = new ListWidget("updates_container", "#gimply_updates_container");
+    this.fetchEvents();
+};
+
+gimply.prototype._removeGithubElements = function(){
     $("a.selected").removeClass("selected");
     $("#gimply_updates_tab a").addClass("selected");
     var pagehead = $(".pagehead")[0];
@@ -20,10 +29,8 @@ gimply.prototype.showUpdates = function () {
     $(pagehead).append(actions);
     $(pagehead).append(tabs);
 
-    $(container).append("<div id='gimply_updates_container'>Hello, Gimply!</div>");
-    this.fetchEvents();
-};
-
+    $(container).append("<div id='gimply_updates_container'></div>");
+}
 
 gimply.prototype.init_ui = function () {
     var tabs = $("ul.tabs li");
@@ -49,11 +56,41 @@ gimply.prototype.init_events = function () {
         switch (msg.type) {
             case "events":
                 console.warn("Received events (" + msg.events.length + "): ", msg);
+                port.postMessage({type:"fetchContributors"});
+                break;
+            case "contributors":
+                _(msg.contributors).each(function(contributor){
+                    $g.contributors.add("contributor_" + contributor.login, contributor.login, contributor.login);
+                });
+                var sortedLoginIds = _.chain(msg.contributors).sortBy(function(contributor){
+                    return contributor.latest_update_at? (-1 * new Date(contributor.latest_update_at)) : 0;;
+                }).pluck("login").value();
+                $g.contributors.sort(sortedLoginIds);
+                break;
+            case "contributor":
+                this.port.postMessage({type:"fetchContributors"});
                 break;
         }
     });
 }
 gimply.prototype.fetchEvents = function () {
-    this.port.postMessage({type:"fetchEvents", repo:this.getCurrentRepoName()});
+    this.port.postMessage({type:"fetchContributors"});
+    this.port.postMessage({type:"fetchEvents"});
 }
-$g = new gimply();
+
+    gimply.prototype.toHtml = function(update){
+        switch(update.type){
+            case "":
+        }
+    }
+    gimply.prototype.pushEventToHtml = function(){
+
+    }
+    gimply.prototype.issueCommentEventToHtml = function(){
+
+    }
+    gimply.prototype.issuesEventToHtml = function(event){
+
+    }
+
+var $g = new gimply();
