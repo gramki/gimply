@@ -3,6 +3,7 @@
 <script type="text/javascript" src="js/lib/underscore-min.js"></script>
 <script type="text/javascript" src="js/lib/jquery-171.js"></script>
 <script type="text/javascript" src="js/lib/event.js"></script>
+<script type="text/javascript" src="js/lib/util.js"></script>
 <script type="text/javascript" src="js/lib/git.js"></script>
 
 <script type="text/javascript">
@@ -12,6 +13,7 @@
 
     var openPorts = [];
     chrome.extension.onConnect.addListener(function (port) {
+        openPorts.push(port);
         var repository = $git.addRepository(port.name);
         var oneHour = 60 * 60 * 1000;
         if (((new Date()) - repository.lastFetchTime) > oneHour) {
@@ -24,20 +26,35 @@
             switch (request.type) {
                 case "fetchEvents":
                     repository.fetchEvents();
-                    port.postMessage({type:"events", events:repository.events});
+                    break;
+                case "filterEvents":
+                    repository.fetchEvents();
+                    var events = repository.filterEvents(request.filter);
+                    port.postMessage({
+                        type:"filtered-events",
+                        payload:events,
+                        repo:repository.name,
+                        filter:request.filter});
                     break;
                 case "fetchContributors":
-                    port.postMessage({type:"contributors", contributors:repository.contributors});
+                    port.postMessage({type:"contributors", payload:repository.contributors, repo:repository.name});
+                    break;
+                case "postStatusUpdate":
+                    repository.postStatusUpdate(request.body);
                     break;
             }
         });
     });
-    $git.on("contributor", function (contributor, repoName) {
+    var _old_raise = $git.raise.bind($git);
+    $git.raise = function (event_name, args) {
+        var payload = args[0];
+        var repoName = args[1];
         _(openPorts).each(function (port) {
             if (port.name === repoName) {
-                port.postMessage({type:"contributor", contributor:contributor});
+                port.postMessage({type:event_name, payload:payload, repo:repoName});
             }
         });
-    });
+        _old_raise(event_name, args);
+    }
 </script>
 </html>

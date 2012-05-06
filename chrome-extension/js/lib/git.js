@@ -64,6 +64,7 @@ function Repository(name, githubObj) {
     this.eventsById = {};
     this.lastFetchTime = 0;
     this.issues = {};
+    this._STATUS_UPDATE_ISSUE_NUMBER = 1;
     this.initialFetch();
 }
 
@@ -76,8 +77,9 @@ Repository.prototype.addEvent = function (event) {
     if (this.eventsById[event.id]) {
         return false;
     }
-    convertDates(event);
-    var index = _.chain(this.events).pluck('created_at').sortedIndex(event.created_at).value();
+    _.convert_dates(event, ["created_at", "updated_at"]);
+    event.sort_key = -1 * event.created_at;
+    var index = _.chain(this.events).pluck('sort_key').sortedIndex(event.sort_key).value();
     this.events.splice(index, 0, event);
     this.eventsById[event.id] = event;
 
@@ -91,8 +93,14 @@ Repository.prototype.addEvent = function (event) {
         case "IssuesEvent":
             this.fetchIssue(event.payload.issue.number);
             break;
+        case "IssueCommentEvent":
+            if(event.payload.issue.number === this._STATUS_UPDATE_ISSUE_NUMBER){
+                event.type = "StatusUpdateEvent";
+            }
+            break;
     }
     this.github.raise(event.type, [event, this.name]);
+    this.github.raise("event", [event, this.name]);
     console.warn("Added event: ", event);
     return true;
 }
@@ -112,6 +120,24 @@ Repository.prototype.addIssue = function(issue){
     return true;
 }
 
+Repository.prototype.postStatusUpdate = function (message) {
+    var url = "https://api.github.com/repos/" + this.name + "/issues/" + this._STATUS_UPDATE_ISSUE_NUMBER + "/comments?access_token=" + this.github._access_token;
+    var self = this;
+    $.ajax({
+        url: url,
+        type: "POST",
+        processData: false,
+        data: JSON.stringify({ body: message}),
+        success: function(comment){
+            self.github.raise("status-update-success", [comment, self.name]);
+        },
+        error: function(xhr, status, e){
+            console.error("status-update-failure", message, xhr, e);
+            self.github.raise("status-update-failure", [message, self.name]);
+        }
+    });
+}
+
 Repository.prototype.oldestEvent = function () {
     return _.last(this.events);
 }
@@ -124,6 +150,17 @@ Repository.prototype.fetchEvents = function () {
         return canFetchMore && didNotFindOverlap;
     }).bind(this));
 };
+
+Repository.prototype.filterEvents = function(filter){
+    var logins;
+    if(filter && filter.login){
+        logins = filter.login.split(",");
+    }
+    return _(this.events).filter(function(event){
+        var issue = event.payload.issue;
+        return !logins || _(logins).contains(event.actor.login) || (issue && issue.assignee && _(logins).contains(issue.assignee.login));
+    });
+}
 
 Repository.prototype.addContributor = function(contributor){
     this.contributors[contributor.login] = contributor;

@@ -7,6 +7,7 @@
                 "js/lib/underscore-min.js",
                 "js/lib/jquery-ui-1.8.20.custom.min.js",
                 "js/lib/event.js",
+                "js/lib/util.js",
                 "js/widgets.js",
                 "js/github_content.js"],
             "run_at":"document_end"
