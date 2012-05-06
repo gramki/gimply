@@ -60,10 +60,17 @@ function Repository(name, githubObj) {
     this.name = name;
     this.events = [];
     this.contributors = {};
+    this.milestones = {};
     this.eventsById = {};
     this.lastFetchTime = 0;
-    this.fetchContributors();
+    this.issues = {};
+    this.initialFetch();
 }
+
+Repository.prototype.initialFetch = function(){
+    this.fetchContributors();
+    this.fetchMilestones();
+};
 
 Repository.prototype.addEvent = function (event) {
     if (this.eventsById[event.id]) {
@@ -80,8 +87,23 @@ Repository.prototype.addEvent = function (event) {
             contributor.latest_update_at = event.created_at;
         }
     }
-    this.github.raise(event.type, [event]);
+    this.github.raise(event.type, [event, this.name]);
     console.warn("Added event: ", event);
+    return true;
+}
+
+Repository.prototype.addMilestone = function(milestone){
+    this.milestones[milestone.number] = milestone;
+    if(milestone.state === "open" || milestone.open_issues > 0){
+        this.fetchIssues({milestone: milestone.number});
+    }
+    this.github.raise("milestone", [milestone, this.name]);
+    return true;
+}
+
+Repository.prototype.addIssue = function(issue){
+    this.issues[issue.number] = issue;
+    this.github.raise("issue", [issue, this.name]);
     return true;
 }
 
@@ -109,6 +131,32 @@ Repository.prototype.fetchContributors = function(){
         _(contributors).each(this.addContributor.bind(this));
     }).bind(this));
 };
+
+Repository.prototype.fetchMilestones = function(){
+    var url = "https://api.github.com/repos/" + this.name + "/milestones?access_token=" + this.github._access_token;
+    paginatedGet(url, (function(milestones){
+        var didNotFindOverlap = _(milestones).all(this.addMilestone.bind(this));
+        return didNotFindOverlap;
+    }).bind(this));
+};
+
+Repository.prototype.fetchIssues = function(filters){
+    var query = _(filters).reduce(function(query, value, key){
+        return query + "&" + key + "=" + value;
+    }, "");
+
+    var url = "https://api.github.com/repos/" + this.name + "/issues?access_token=" + this.github._access_token + query;
+    paginatedGet(url, (function(issues){
+        var didNotFindOverlap = _(issues).all(this.addIssue.bind(this));
+        return didNotFindOverlap;
+    }).bind(this));
+};
+
+Repository.prototype.fetchIssue = function(number){
+    var url = "https://api.github.com/repos/" + this.name + "/issues/"+number+"?access_token=" + this.github._access_token;
+    paginatedGet(url, this.addIssue.bind(this));
+};
+
 
 Github.prototype.addRepository = function (name) {
     return (this.repository[name] = this.repository[name] || new Repository(name, this));
