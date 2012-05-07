@@ -206,11 +206,24 @@ Github.prototype.addRepository = function (name) {
 
 Github.prototype.setAccessToken = function (/*String*/ token) {
     this._access_token = token;
+    this._getUser();
+};
+
+Github.prototype.hasAccessToken = function(){
+    return !!this._access_token;
 };
 
 Github.prototype.on = event_mixin.on;
 Github.prototype.off = event_mixin.off;
 Github.prototype.raise = event_mixin.raise;
+
+Github.prototype._getUser = function(){
+    var url = "https://api.github.com/user?access_token=" + this._access_token;
+    paginatedGet(url, (function(user){
+        this.user = user;
+        this.raise('user', [user]);
+    }).bind(this));
+}
 
 Github.prototype.fetchEvents = function (repoName) {
     var repository = this.addRepository(repoName);

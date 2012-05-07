@@ -44,6 +44,11 @@
                     break;
             }
         });
+        if($git.user === null || !$git.hasAccessToken()){
+            port.postMessage({type:"invalid-token"});
+        }else{
+            port.postMessage({type:"current-user", user: $git.user});
+        }
     });
     var _old_raise = $git.raise.bind($git);
     $git.raise = function (event_name, args) {
