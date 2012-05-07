@@ -9,6 +9,23 @@ gimply.prototype.showUpdates = function () {
     var self = this;
     this._removeGithubElements();
 
+    var postUpdate = $("<a id='post_update_action'></a>").addClass("action button post-update-button").html("Post Your Update");
+    postUpdate.click(function(){
+        self.showUpdateInput();
+        $("#gimply_updates_input").addClass("active");
+    });
+    $("#gimply_updates_input").append(postUpdate);
+    $("#gimply_updates_input").append($("<div></div>").attr("id", "update_box_container").addClass("right"));
+    this.updateBox = new UpdateBox("update_input", "#update_box_container");
+    this.updateBox.on('enter', (function(txt){
+        this.port.postMessage({ type: "postStatusUpdate", body: txt});
+    }).bind(this));
+    this.updateBox.on('cancel', function(){
+        self.hideUpdateInput();
+        $("#gimply_updates_input").removeClass("active");
+    });
+    this.hideUpdateInput();
+
     this._showCommits = true;
 
     var toggleCommits = $("<a href='javascript:void(0)'></a>").addClass("action toggle").html("Hide Commits");
@@ -55,26 +72,6 @@ gimply.prototype._removeGithubElements = function(){
     $(pagehead).append(tabs);
 
     $(container).append("<div id='gimply_updates_input'></div>");
-
-    var self = this;
-
-    var postUpdate = $("<a id='post_update_action'></a>").addClass("action button post-update-button").html("Post Your Update");
-    postUpdate.click(function(){
-        self.showUpdateInput();
-        $("#gimply_updates_input").addClass("active");
-    });
-    $("#gimply_updates_input").append(postUpdate);
-    $("#gimply_updates_input").append($("<div></div>").attr("id", "update_box_container").addClass("right"));
-    this.updateBox = new UpdateBox("update_input", "#update_box_container");
-    this.updateBox.on('enter', (function(txt){
-        this.port.postMessage({ type: "postStatusUpdate", body: txt});
-    }).bind(this));
-    this.updateBox.on('cancel', function(){
-        self.hideUpdateInput();
-        $("#gimply_updates_input").removeClass("active");
-    });
-    this.hideUpdateInput();
-
     $(container).append("<div id='gimply_updates_container'></div>");
 }
 
