@@ -1,0 +1,176 @@
+#gimply_updates_container {
+    position: relative;
+}
+#gimply_updates_container li {
+    font-family: Helvetica, arial, freesans, clean, sans-serif;
+    padding: 4px 8px;
+    border-raidus: 5px;
+}
+
+#contributors {
+    position: absolute;
+    left: 0;
+    top: 0;
+    max-width: 170px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    list-style-type: none;
+    border-right: solid 2px #ddd;
+    padding-right: 4px;
+}
+
+#contributors li {
+    font-family: Helvetica, arial, freesans, clean, sans-serif;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+}
+
+#contributors li:hover {
+    background-color: #3eb2db;
+    color: white;
+}
+
+#contributors .ui-selected {
+    background-color: #F39814;
+    color: white;
+}
+
+#gimply_updates_input .right, #gimply_updates_container .right {
+    float: none;
+    margin-left: 170px;
+    padding-left: 1em;
+}
+#gimply_updates_input {
+    position: relative;
+    margin-top: -15px;
+    min-height: 2em;
+    margin-bottom: 5px;
+}
+#gimply_updates_input.active {
+    padding-bottom: 15px;
+    padding-top: 10px;
+    border-bottom: 1px dotted #ccc;
+}
+#post_update_action{
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 10px 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    color: #3eb2db;
+}
+
+#updates_container {
+    list-style-type: none;
+    user-select: all;
+}
+
+#updates_container .date {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #4183C4;
+    margin: 0.5em 0;
+}
+
+#updates_container .update {
+    margin-bottom: 4px;
+}
+
+#updates_container .contributor {
+    display: none;
+    padding-right: 2em;
+}
+
+#updates_container .contributor img {
+    height: 1em;
+    width: 1em;
+}
+
+#updates_container .contributor .name {
+    display: none;
+}
+
+#updates_container .commit {
+    height: 1.5em;
+    overflow: hidden;
+    padding-left: 15px;
+    cursor: pointer;
+}
+#updates_container .commit-message:hover {
+    color: #4183C4;
+}
+
+.commit .commit-sha {
+    display: none;
+}
+.commit .sha {
+    font-weight: bold;
+    margin: 0 4px;
+    border: 1px dotted;
+    border-radius: 4px;
+    padding: 0 2px;
+}
+
+#updates_container .update .time {
+    display: none;
+}
+
+#updates_container .update-type {
+    font-size: 11px;
+    background-color: #DDD;
+    border-radius: 4px;
+    padding: 1px 5px;
+    margin: 0 3px;
+    color: white;
+    min-width: 45px;
+    display: inline-block;
+    text-align: center;
+    font-weight: bold;
+}
+
+#gimply_updates_container .actionBar {
+    text-align: right;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+#gimply_updates_container .actionBar * {
+    padding: 2px 8px;
+    margin: 0 4px;
+    cursor: pointer;
+    font-family: arial;
+    font-size: 11px;
+    text-decoration: none;
+    color: #bbb;
+}
+
+#update_input {
+    padding: 8px;
+    background-color:
+        rgba(148, 193, 236, 0.86);
+    border: 1px solid
+    #4986D3;
+    border-radius: 5px;
+    position: relative;
+    margin-right: 20px;
+    margin-top: 5px;
+}
+#update_input .cancel {
+    position: absolute;
+    top: 0;
+    right: 8px;
+}
+#update_input textarea {
+    display: inline-block;
+}
+#update_input button {
+    display: inline-block;
+    margin: 0 5px;
+    padding: 4px 10px;
+    position: relative;
+    bottom: 10px;
+    cursor: pointer;
+}

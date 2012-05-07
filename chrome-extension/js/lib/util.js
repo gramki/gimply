@@ -54,29 +54,31 @@ _.mixin({
             }
             var hours = Math.round(mins/60);
             if(hours === 1){
-                return "~ an hour ago";
+                return "an hour ago";
             }
-            return "~ "+ hours + " hours ago"
+            return hours + " hours ago"
         }
         var h = d.getHours();
         var m = d.getMinutes();
         var ampm = h >= 12 ? "pm" : "am";
         h = (h>12)?h-12:h;
-        return "~ " + h + " " + ampm;
+        return h + " " + ampm;
     },
 
     git_message: function(msg, repoName){
         //Converts git message to html
         msg = msg.replace(/\r?\n/g, "<br/>");
-        var matches = msg.match(/[0-9a-f]{5,50}/g);
-        _.chain(matches).uniq().each(function(sha){
-            msg = msg.replace(sha, _.sha_html(sha, repoName));
+        var matches = msg.match(/\W?[0-9a-f]{5,50}\W?/g);
+        _.chain(matches).uniq().filter(function(txt){
+            return !!txt.match(/[0-9]+/);
+        }).each(function(sha){
+            msg = msg.replace(sha, _.sha_html(sha, repoName)[0].outerHTML);
         });
         return msg;
     },
 
     sha_html: function(sha, repoName){
-        return "<a href='/" + repoName+"/commit/"+ sha +"' class='sha'>"+ sha.substr(0,9) +"</a>";
+        return $("<a></a>").attr("href", "/" + repoName+"/commit/"+ sha).addClass('sha').html(sha.substr(0,9));
     },
 
     git_contributor: function(contributor){

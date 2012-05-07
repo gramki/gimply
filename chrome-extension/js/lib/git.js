@@ -158,7 +158,7 @@ Repository.prototype.filterEvents = function(filter){
     }
     return _(this.events).filter(function(event){
         var issue = event.payload.issue;
-        return !logins || _(logins).contains(event.actor.login) || (issue && issue.assignee && _(logins).contains(issue.assignee.login));
+        return !logins || _(logins).contains(event.actor.login) || (event.type === "IssuesEvent" && issue && issue.assignee && _(logins).contains(issue.assignee.login));
     });
 }
 

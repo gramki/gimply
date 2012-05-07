@@ -83,6 +83,11 @@ function UpdateBox(id, parent){
         $("button", this.container).attr('disabled', 'disabled');
         this.raise("enter", [message]);
     }).bind(this));
+    var widget = this;
+    var cancel = $("<a></a>").addClass("cancel").attr("href", "javascript:void(0)").html("x").click(function(){
+        widget.raise("cancel", [widget]);
+    });
+    $(this.container).append(cancel);
 }
 
 UpdateBox.prototype.on = event_mixin.on;
