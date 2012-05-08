@@ -9,16 +9,13 @@
 <script type="text/javascript">
     "use strict";
     var $git = new Github();
-    $git.setAccessToken("3fd0db047bcbed22e09d5409f9d0f664e58dcfa1");
+    var token = localStorage.getItem("access-token");
+    $git.setAccessToken(token);
 
     var openPorts = [];
     chrome.extension.onConnect.addListener(function (port) {
         openPorts.push(port);
-        var repository = $git.addRepository(port.name);
-        var oneHour = 60 * 60 * 1000;
-        if (((new Date()) - repository.lastFetchTime) > oneHour) {
-            repository.fetchEvents();
-        }
+        var repository;
         port.onDisconnect.addListener(function () {
             openPorts = _(openPorts).without(port);
         });
@@ -42,12 +39,22 @@
                 case "postStatusUpdate":
                     repository.postStatusUpdate(request.body);
                     break;
+                case "setAccessToken":
+                    $git.setAccessToken(request.token);
+                    repository = $git.addRepository(port.name);
+                    repository.fetchEvents();
+                    break;
             }
         });
         if($git.user === null || !$git.hasAccessToken()){
             port.postMessage({type:"invalid-token"});
         }else{
-            port.postMessage({type:"current-user", user: $git.user});
+            port.postMessage({type:"current-user", payload: $git.user});
+            repository = $git.addRepository(port.name);
+            var oneHour = 60 * 60 * 1000;
+            if (((new Date()) - repository.lastFetchTime) > oneHour) {
+                repository.fetchEvents();
+            }
         }
     });
     var _old_raise = $git.raise.bind($git);
@@ -61,5 +68,27 @@
         });
         _old_raise(event_name, args);
     }
+</script>
+
+<script type="text/javascript">
+    chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
+        switch (request.type) {
+            case "save":
+                localStorage.setItem(request.key, request.value);
+                if(request.key === 'access_token'){
+                    $git.setAccessToken(request.value)
+                }
+                sendResponse("saved");
+                break;
+            case "get":
+                sendResponse({
+                    type:"get",
+                    key:request.key,
+                    value:localStorage.getItem(request.key)
+                });
+                break;
+
+        }
+    });
 </script>
 </html>

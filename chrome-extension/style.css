@@ -174,3 +174,15 @@
     bottom: 10px;
     cursor: pointer;
 }
+
+#oauth button {
+    color: white;
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+    font-weight: bold;
+    cursor: pointer;
+    rgba(0, 0, 0, 0.3);
+    background: #4794BC;
+    background: -webkit-linear-gradient( #4794BC, #3A7999);
+    border-bottom-color: #438BB1;
+    padding: 4px 10px;
+}

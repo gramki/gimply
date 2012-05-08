@@ -9,9 +9,16 @@
                 "js/lib/event.js",
                 "js/lib/util.js",
                 "js/widgets.js",
-                "js/github_content.js"],
+                "js/github_content.js",
+                "js/user_creds.js"
+            ],
             "css": [ "style.css" ],
             "run_at":"document_end"
+        },
+        {
+            "matches":["http://gimply.herokuapp.com/login_success*"],
+            "js": [ "js/oauth_token_reader.js"],
+            "run_at": "document_start"
         }
     ],
     "background":{

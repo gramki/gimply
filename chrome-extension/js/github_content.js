@@ -81,12 +81,28 @@ gimply.prototype.init_ui = function () {
         return;
     }
     $(tabs[1]).before("<li id='gimply_updates_tab'><a href='#gimply_updates'>Updates</a></li>");
-    $("#gimply_updates_tab").click(this.showUpdates.bind(this));
-    var isUpdatesTab = (window.location.href.indexOf("#gimply_updates") > 0);
-    if (isUpdatesTab) {
-        this.showUpdates();
+    $("#gimply_updates_tab").click(this.onUpdatesTabSelect.bind(this));
+    if (this.isUpdatesTab()) {
+        this.onUpdatesTabSelect();
     }
 };
+
+gimply.prototype.isUpdatesTab = function(){
+    return (window.location.href.indexOf("#gimply_updates") > 0);
+}
+
+gimply.prototype.onUpdatesTabSelect = function(){
+    if(!this.hasToken){
+        this.showOAuthPage();
+        return;
+    }
+    if( !this.registeredUser && this.registeredUser.login !== this.getCurrentUser()){
+        this.showUserMismatch();
+        return;
+    }
+    this.showUpdates();
+}
+
 
 gimply.prototype.getCurrentRepoName = function(){
     return _(window.location.href.match("https://github.com/(\\w+)/(\\w+)")).rest().join("/");
@@ -126,6 +142,14 @@ gimply.prototype.init_events = function () {
                 break;
             case "status-update-failure":
                 this.updateBox.showError("Sorry! Gimply failed to post your update.");
+                break;
+            case "invalid-token":
+                this.onInvalidToken();
+                break;
+            case "user":
+            case "current-user":
+                this.registeredUser = msg.payload;
+                this.onRegisteredUserChange(this.registeredUser);
                 break;
         }
     }).bind(this));
@@ -259,4 +283,3 @@ gimply.prototype.issuesEventToHtml = function(event){
     return div;
 }
 
-var $g = new gimply();
