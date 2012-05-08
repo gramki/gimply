@@ -111,3 +111,7 @@ UpdateBox.prototype.showError = function(msg){
         $(".error", this.container).hide('slow');
     });
 };
+
+UpdateBox.prototype.isVisible = function(){
+    return $("textarea:visible", this.container).length !== 0;
+}

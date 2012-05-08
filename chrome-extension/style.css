@@ -70,11 +70,8 @@
     font-size: 1.3em;
     font-weight: bold;
     color: #4183C4;
-    margin: 0.5em 0;
-}
-
-#updates_container .update {
-    margin-bottom: 4px;
+    margin-top: 2px;
+    margin-bottom: -4px;
 }
 
 #updates_container .contributor {
@@ -91,23 +88,19 @@
     display: none;
 }
 
-#updates_container .commit {
-    height: 1.5em;
-    overflow: hidden;
+#updates_container .update {
+    margin-bottom: 4px;
     padding-left: 15px;
+}
+
+#updates_container .commit, #updates_container .issue-entry{
+    height: 1.5em;
+    /*padding-left: 15px;*/
+}
+#updates_container .commit, #updates_container .issue-entry {
+    overflow: hidden;
     cursor: pointer;
 }
-
-#updates_container .status-body {
-    padding-left: 15px;
-    min-height: 1.5em;
-}
-#updates_container .issue-entry {
-    padding-left: 15px;
-    height: 1.5em;
-    overflow: hidden;
-}
-
 
 #updates_container .commit-message:hover, #updates_container .issue-title:hover {
     color: #4183C4;
@@ -145,7 +138,9 @@
     text-decoration: none;
     color: #bbb;
 }
-
+#update_box_container {
+    margin-top: -10px;
+}
 #update_input {
     padding: 8px;
     background-color:
@@ -190,7 +185,7 @@
     font-size: 11px;
     background-color: #DDD;
     border-radius: 2px;
-    margin: 0 3px;
+    margin: 0 3px 0 0;
     color: white;
     min-width: 45px;
     display: inline-block;
@@ -212,4 +207,9 @@
 }
 #updates_container .update-type.status{
     background-color: CornflowerBlue;
+}
+#loading {
+    position: absolute;
+    left: 200px;
+    top: 15px;
 }

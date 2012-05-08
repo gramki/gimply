@@ -4,7 +4,11 @@ gimply.prototype.showUpdates = function () {
     var self = this;
     var postUpdate = $("<a id='post_update_action'></a>").addClass("action button post-update-button").html("Post Your Update");
     postUpdate.click(function () {
-        self.showUpdateInput();
+        if(self.updateBox.isVisible()){
+            self.hideUpdateInput();
+        }else{
+            self.showUpdateInput();
+        }
         $("#gimply_updates_input").addClass("active");
     });
     $("#gimply_updates_input").append(postUpdate);
@@ -39,6 +43,7 @@ gimply.prototype.showUpdates = function () {
     this.contributors.setDefault(this.getCurrentUser());
     this.contributors.on('select', (function(){
         this.updates.empty();
+        this.showLoading();
         this.filterEvents();
     }).bind(this));
 
@@ -100,6 +105,7 @@ gimply.prototype.updateContributors = function(contributors){
 
 gimply.prototype.addEvents = function (events) {
     this.updates.empty();
+    this.hideLoading();
     var lastEvent = null;
     var updateList = this.updates;
     var self = this;
@@ -200,10 +206,8 @@ gimply.prototype.pushEventToHtml = function (event) {
     var div = $("<div></div>").addClass("update").addClass("push");
     var type = this.typeToHtml("pushed");
     var branch = $("<span></span>").addClass("branch-name").html($("<a></a>").attr("href", "https://github.com/" + this.getCurrentRepoName() + "/tree/" + branchName).html(branchName));
-    var timestamp = $("<span></span>").addClass("time").html(_.time_name(event.created_at));
-    var contributor = _.git_contributor(event.actor).addClass("contributor");
-
-    div.append($("<div></div>").addClass("push-details").append(type).append(contributor).append(branch).append(timestamp));
+    var header = $("<div></div>").addClass("update-header push-details").append(type).append(branch);
+    div.append(header);
 
     _(event.payload.commits).each(function (commit) {
         var sha = _.sha_html(commit.sha, repoName);
@@ -218,22 +222,25 @@ gimply.prototype.pushEventToHtml = function (event) {
 gimply.prototype.statusUpdateEventToHtml = function (event) {
     var repoName = this.getCurrentRepoName();
     var type = this.typeToHtml("status");
+    var header = $("<div></div>").addClass("update-header");
+    header.append(type);
 
     var div = $("<div></div>").addClass("update").addClass("status-update");
-    var contributor = _.git_contributor(event.actor).addClass("contributor");
-    var timestamp = $("<span></span>").addClass("time").html(_.time_name(event.created_at));
     var messages = $("<div></div>").addClass("status-messages");
     _(event.payload.comments).each(function(comment){
         var html = $("<div></div>").addClass("status-body").html(_.git_message(comment.body, repoName));
         messages.append(html);
     });
-    return div.append(type).append(contributor).append(messages).append(timestamp);
+    return div.append(header).append(messages);
 }
 
 gimply.prototype.issuesEventToHtml = function (event) {
     var repoName = this.getCurrentRepoName();
     var div = $("<div></div>").addClass("update").addClass("issue");
     var type = this.typeToHtml(event.payload.action);
+
+    var header = $("<div></div>").addClass("update-header");
+    header.append(type);
 
     var issues = $("<div></div>").addClass("issues");
 
@@ -243,7 +250,20 @@ gimply.prototype.issuesEventToHtml = function (event) {
         var html = $("<div></div>").addClass("issue-entry").append(number).append(title);
         issues.append(html);
     });
-    div.append(type).append(issues);
+    div.append(header).append(issues);
     return div;
 }
 
+gimply.prototype.showLoading = function(){
+    var loading = $("#gimply_updates_container #loading");
+    if( loading.length === 0 ){
+        var loading = $("<img/>").attr("id", "loading").attr("src", chrome.extension.getURL("images/loading.gif"));
+        $("#gimply_updates_container").append(loading);
+    }
+    loading.show();
+}
+
+gimply.prototype.hideLoading = function(){
+    var loading = $("#gimply_updates_container #loading");
+    loading.hide();
+}
