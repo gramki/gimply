@@ -49,6 +49,11 @@ gimply.prototype.showUpdates = function () {
             window.open("https://github.com/" + self.getCurrentRepoName() + "/commit/" + $(this).attr('data-commit-sha'));
         }
     });
+    $(this.updates.container).on("click", ".issue-title", function (e) {
+        if(e.target === this){
+            window.open("https://github.com/" + self.getCurrentRepoName() + "/issues/" + $(this).attr('data-issue-number'));
+        }
+    });
     //For some reason, anchor tags are not working when injected through content script
     $(this.updates.container).on("click", "a", function(e){
         if(this.href.indexOf("#") !== 0 && this.href.indexOf("javascript:") !== 0){
@@ -234,7 +239,7 @@ gimply.prototype.issuesEventToHtml = function (event) {
 
     _(event.payload.issues).each(function(issue){
         var number = $("<span></span>").addClass("issue-number").html($("<a></a>").attr("href", "https://github.com/" + repoName + "/issues/" + issue.number).html("#" + issue.number));
-        var title = $("<span></span>").addClass("issue-title").html(_.git_message(issue.title, repoName)).addClass(event.payload.action);
+        var title = $("<span></span>").addClass("issue-title").html(_.git_message(issue.title, repoName)).addClass(event.payload.action).attr("data-issue-number", issue.number);
         var html = $("<div></div>").addClass("issue-entry").append(number).append(title);
         issues.append(html);
     });

@@ -104,12 +104,14 @@
 }
 #updates_container .issue-entry {
     padding-left: 15px;
-    min-height: 1.5em;
+    height: 1.5em;
+    overflow: hidden;
 }
 
 
-#updates_container .commit-message:hover {
+#updates_container .commit-message:hover, #updates_container .issue-title:hover {
     color: #4183C4;
+    cursor: pointer;
 }
 
 .commit .commit-sha {
