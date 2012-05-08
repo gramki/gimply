@@ -102,6 +102,11 @@
     padding-left: 15px;
     min-height: 1.5em;
 }
+#updates_container .issue-entry {
+    padding-left: 15px;
+    min-height: 1.5em;
+}
+
 
 #updates_container .commit-message:hover {
     color: #4183C4;
@@ -110,12 +115,12 @@
 .commit .commit-sha {
     display: none;
 }
-.commit .sha {
-    font-weight: bold;
+.commit .sha, .issue-entry .issue-number {
     margin: 0 4px;
     border: 1px dotted;
     border-radius: 4px;
     padding: 0 2px;
+    font-size: 11px;
 }
 
 #updates_container .update .time {
@@ -196,9 +201,6 @@
 
 #updates_container .update-type.pushed{
     background-color: SteelBlue;
-    font-size: 10px;
-    padding: 0;
-    font-family: arial;
 }
 #updates_container .update-type.closed{
     background-color: hotPink;
@@ -206,4 +208,3 @@
 #updates_container .update-type.status{
     background-color: Indigo;
 }
-

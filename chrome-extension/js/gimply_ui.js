@@ -107,7 +107,11 @@ gimply.prototype.addEvents = function (events) {
                 break;
             case "PushEvent":
                 //older commits first
-                Array.prototype.unshift.apply(mergeTo.payload.commits, event.payload.commits)
+                Array.prototype.unshift.apply(mergeTo.payload.commits, event.payload.commits);
+                break;
+            case "IssuesEvent":
+                //older events first
+                Array.prototype.unshift.apply(mergeTo.payload.issues, event.payload.issues);
                 break;
         }
     }
@@ -117,22 +121,23 @@ gimply.prototype.addEvents = function (events) {
         if(event.type === "StatusUpdateEvent"){
             event.payload.comments = [event.payload.comment];
         }
+        if(event.type === "IssuesEvent"){
+            event.payload.issues = [event.payload.issue];
+        }
         return event;
     }).reduce(function(reducedEvents, event){
-            var merged = false;
-            if(event.type === "PushEvent" || event.type === "StatusUpdateEvent"){
-            //merge push/satus-update events from same user to same branch on a day
-            merged = _(reducedEvents).some(function(prevEvent){
-                if( prevEvent.type === event.type &&
-                    prevEvent.payload.ref === event.payload.ref &&
-                    prevEvent.actor.login === event.actor.login &&
-                    _.same_day(prevEvent.created_at, event.created_at)) {
-                    _merge(prevEvent, event);
-                    return true;
-                }
-                return false;
-            });
-        }
+        var merged;
+        merged = _(reducedEvents).some(function(prevEvent){
+            if( prevEvent.type === event.type &&
+                (event.type === "IssuesEvent"?(event.payload.action === prevEvent.payload.action):true) &&
+                prevEvent.payload.ref === event.payload.ref &&
+                prevEvent.actor.login === event.actor.login &&
+                _.same_day(prevEvent.created_at, event.created_at)) {
+                _merge(prevEvent, event);
+                return true;
+            }
+            return false;
+        });
         if(!merged){
             reducedEvents.push(event);
         }
@@ -221,21 +226,19 @@ gimply.prototype.statusUpdateEventToHtml = function (event) {
 }
 
 gimply.prototype.issuesEventToHtml = function (event) {
-    var issue = event.payload.issue;
-    var assignee = issue.assignee || event.actor;
     var repoName = this.getCurrentRepoName();
     var div = $("<div></div>").addClass("update").addClass("issue");
     var type = this.typeToHtml(event.payload.action);
 
-    var number = $("<span></span>").addClass("issue-number").html($("<a></a>").attr("href", "https://github.com/" + repoName + "/issues/" + issue.number).html("#" + issue.number));
-    var title = $("<span></span>").addClass("issue-title").html(_.git_message(issue.title, repoName)).addClass(event.payload.action);
-    var timestamp = $("<span></span>").addClass("time").html(_.time_name(event.created_at));
+    var issues = $("<div></div>").addClass("issues");
 
-    div.append(type).append(number).append(title).append(_.git_contributor(assignee).addClass("assignee"));
-    if (assignee.login !== event.actor.login) {
-        div.append(_.git_contributor(event.actor).addClass("actor"));
-    }
-    div.append(timestamp);
+    _(event.payload.issues).each(function(issue){
+        var number = $("<span></span>").addClass("issue-number").html($("<a></a>").attr("href", "https://github.com/" + repoName + "/issues/" + issue.number).html("#" + issue.number));
+        var title = $("<span></span>").addClass("issue-title").html(_.git_message(issue.title, repoName)).addClass(event.payload.action);
+        var html = $("<div></div>").addClass("issue-entry").append(number).append(title);
+        issues.append(html);
+    });
+    div.append(type).append(issues);
     return div;
 }
 
