@@ -36,6 +36,7 @@ gimply.prototype._removeGithubElements = function(){
 
     $(container).append("<div id='gimply_updates_input'></div>");
     $(container).append("<div id='gimply_updates_container'></div>");
+
 }
 
 

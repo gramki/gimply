@@ -72,13 +72,22 @@ _.mixin({
         _.chain(matches).uniq().filter(function(txt){
             return !!txt.match(/[0-9]+/);
         }).each(function(sha){
-            msg = msg.replace(sha, _.sha_html(sha, repoName)[0].outerHTML);
+            msg = msg.replace(new RegExp(sha, "g"), _.sha_html(sha, repoName)[0].outerHTML);
         });
+        matches = msg.match(/#[0-9]+/g);
+        if(matches){
+            _.chain(matches).uniq().each(function(numWithHash){
+                msg = msg.replace(new RegExp(numWithHash, "g"), _.issue_html(numWithHash.substr(1), repoName)[0].outerHTML);
+            });
+        }
         return msg;
     },
 
     sha_html: function(sha, repoName){
         return $("<a></a>").attr("href", "/" + repoName+"/commit/"+ sha).addClass('sha').html(sha.substr(0,9));
+    },
+    issue_html: function(num, repoName) {
+        return $("<a></a>").attr("href", "/" + repoName+"/issues/"+ num).addClass('sha').html("#" + num);
     },
 
     git_contributor: function(contributor){

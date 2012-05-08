@@ -41,8 +41,17 @@ gimply.prototype.showUpdates = function () {
 
     this.updates = new ListWidget("updates_container", "#gimply_updates_container");
     $(this.updates.container).addClass("right");
-    $(this.updates.container).on("click", ".commit-message", function () {
-        window.open("https://github.com/" + self.getCurrentRepoName() + "/commit/" + $(this).attr('data-commit-sha'));
+    $(this.updates.container).on("click", ".commit-message", function (e) {
+        if(e.target === this){
+            window.open("https://github.com/" + self.getCurrentRepoName() + "/commit/" + $(this).attr('data-commit-sha'));
+        }
+    });
+    //For some reason, anchor tags are not working when injected through content script
+    $(this.updates.container).on("click", "a", function(e){
+        if(this.attr("href").indexOf("#") !== 0 && this.attr("href").indexOf("javascript:") !== 0){
+            e.stopPropagation();
+            window.location.href = this.attr("href");
+        }
     });
     this.fetchEvents();
 };
