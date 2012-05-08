@@ -75,7 +75,7 @@
         switch (request.type) {
             case "save":
                 localStorage.setItem(request.key, request.value);
-                if(request.key === 'access_token'){
+                if(request.key === 'access-token'){
                     $git.setAccessToken(request.value)
                 }
                 sendResponse("saved");
