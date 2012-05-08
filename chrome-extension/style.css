@@ -202,11 +202,14 @@
 }
 
 #updates_container .update-type.pushed{
-    background-color: SteelBlue;
-}
-#updates_container .update-type.closed{
     background-color: hotPink;
 }
+#updates_container .update-type.reopened {
+    background-color: Chocolate;
+}
+#updates_container .update-type.closed{
+    background-color: SeaGreen;
+}
 #updates_container .update-type.status{
-    background-color: Indigo;
+    background-color: CornflowerBlue;
 }
