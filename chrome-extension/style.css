@@ -9,12 +9,13 @@
 
 #contributors {
     float: left;
-    max-width: 170px;
+    width: 170px;
     overflow-x: hidden;
     overflow-y: auto;
     list-style-type: none;
     border-right: solid 2px #ddd;
     padding-right: 4px;
+    min-height: 150px;
 }
 
 #contributors li {
