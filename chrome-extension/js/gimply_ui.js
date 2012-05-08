@@ -97,16 +97,37 @@ gimply.prototype.addEvents = function (events) {
     var lastEvent = null;
     var updateList = this.updates;
     var self = this;
-    _.chain(events).filter(this.shouldRenderEvent.bind(this)).each(
+    _.chain(events).filter(this.shouldRenderEvent.bind(this)).map(function(event){
+        _.convert_dates(event, ["created_at", "updated_at"]);
+        return event;
+    }).reduce(function(reducedEvents, event){
+            var merged = false;
+            if(event.type === "PushEvent"){
+            //merge push-events from same user to same branch on a day
+            merged = _(reducedEvents).some(function(prevEvent){
+                if( prevEvent.type === "PushEvent" &&
+                    prevEvent.payload.ref === event.payload.ref &&
+                    prevEvent.actor.login === event.actor.login &&
+                    _.same_day(prevEvent.created_at, event.created_at)) {
+
+                    //older commits first
+                    Array.prototype.unshift.apply(prevEvent.payload.commits, event.payload.commits)
+                    return true;
+                }
+                return false;
+            });
+        }
+        if(!merged){
+            reducedEvents.push(event);
+        }
+        return reducedEvents;
+    }, []).each(
         function (event) {
-            _.convert_dates(event, ["created_at", "updated_at"]);
             if (!lastEvent || !_.same_day(lastEvent.created_at, event.created_at)) {
                 updateList.add(self.dateToHtml(event.created_at));
             }
             lastEvent = event;
             updateList.add(self.toHtml(event));
-        }).each(function (event) {
-            //updateList.add(self.toHtml(event));
         });
 }
 
