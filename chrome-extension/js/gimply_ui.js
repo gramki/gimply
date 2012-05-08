@@ -37,7 +37,10 @@ gimply.prototype.showUpdates = function () {
 
     this.contributors = new ListWidget("contributors", "#gimply_updates_container");
     this.contributors.setDefault(this.getCurrentUser());
-    this.contributors.on('select', this.filterEvents.bind(this));
+    this.contributors.on('select', (function(){
+        this.updates.empty();
+        this.filterEvents();
+    }).bind(this));
 
     this.updates = new ListWidget("updates_container", "#gimply_updates_container");
     $(this.updates.container).addClass("right");
