@@ -73,6 +73,7 @@ _.mixin({
             _.chain(matches).uniq().filter(function(txt){
                 return !!txt.match(/[0-9]+/);
             }).each(function(sha){
+                    sha = $.trim(sha);
                     msg = msg.replace(new RegExp(sha, "g"), _.sha_html(sha, repoName)[0].outerHTML);
                 });
             matches = msg.match(/#[0-9]+/g);

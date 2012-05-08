@@ -92,26 +92,42 @@ gimply.prototype.updateContributors = function(contributors){
     this.contributors.sort(sortedLoginIds);
 }
 
+
 gimply.prototype.addEvents = function (events) {
     this.updates.empty();
     var lastEvent = null;
     var updateList = this.updates;
     var self = this;
+
+    function _merge (mergeTo, event){
+        switch(event.type){
+            case "StatusUpdateEvent":
+                //Older updates first
+                Array.prototype.unshift.apply(mergeTo.payload.comments, event.payload.comments);
+                break;
+            case "PushEvent":
+                //older commits first
+                Array.prototype.unshift.apply(mergeTo.payload.commits, event.payload.commits)
+                break;
+        }
+    }
+
     _.chain(events).filter(this.shouldRenderEvent.bind(this)).map(function(event){
         _.convert_dates(event, ["created_at", "updated_at"]);
+        if(event.type === "StatusUpdateEvent"){
+            event.payload.comments = [event.payload.comment];
+        }
         return event;
     }).reduce(function(reducedEvents, event){
             var merged = false;
-            if(event.type === "PushEvent"){
-            //merge push-events from same user to same branch on a day
+            if(event.type === "PushEvent" || event.type === "StatusUpdateEvent"){
+            //merge push/satus-update events from same user to same branch on a day
             merged = _(reducedEvents).some(function(prevEvent){
-                if( prevEvent.type === "PushEvent" &&
+                if( prevEvent.type === event.type &&
                     prevEvent.payload.ref === event.payload.ref &&
                     prevEvent.actor.login === event.actor.login &&
                     _.same_day(prevEvent.created_at, event.created_at)) {
-
-                    //older commits first
-                    Array.prototype.unshift.apply(prevEvent.payload.commits, event.payload.commits)
+                    _merge(prevEvent, event);
                     return true;
                 }
                 return false;
@@ -196,9 +212,12 @@ gimply.prototype.statusUpdateEventToHtml = function (event) {
     var div = $("<div></div>").addClass("update").addClass("status-update");
     var contributor = _.git_contributor(event.actor).addClass("contributor");
     var timestamp = $("<span></span>").addClass("time").html(_.time_name(event.created_at));
-    var message = $("<span></span>").addClass("status-body").html(_.git_message(event.payload.comment.body, repoName));
-
-    return div.append(type).append(contributor).append(message).append(timestamp);
+    var messages = $("<div></div>").addClass("status-messages");
+    _(event.payload.comments).each(function(comment){
+        var html = $("<div></div>").addClass("status-body").html(_.git_message(comment.body, repoName));
+        messages.append(html);
+    });
+    return div.append(type).append(contributor).append(messages).append(timestamp);
 }
 
 gimply.prototype.issuesEventToHtml = function (event) {

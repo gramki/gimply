@@ -97,6 +97,12 @@
     padding-left: 15px;
     cursor: pointer;
 }
+
+#updates_container .status-body {
+    padding-left: 15px;
+    min-height: 1.5em;
+}
+
 #updates_container .commit-message:hover {
     color: #4183C4;
 }
@@ -116,18 +122,6 @@
     display: none;
 }
 
-#updates_container .update-type {
-    font-size: 11px;
-    background-color: #DDD;
-    border-radius: 4px;
-    padding: 1px 5px;
-    margin: 0 3px;
-    color: white;
-    min-width: 45px;
-    display: inline-block;
-    text-align: center;
-    font-weight: bold;
-}
 
 #gimply_updates_container .actionBar {
     text-align: right;
@@ -184,3 +178,32 @@
     border-bottom-color: #438BB1;
     padding: 4px 10px;
 }
+
+#updates_container .update-type {
+    font-size: 11px;
+    background-color: #DDD;
+    border-radius: 2px;
+    margin: 0 3px;
+    color: white;
+    min-width: 45px;
+    display: inline-block;
+    text-align: center;
+    font-weight: bold;
+    font-size: 10px;
+    padding: 0;
+    font-family: arial;
+}
+
+#updates_container .update-type.pushed{
+    background-color: SteelBlue;
+    font-size: 10px;
+    padding: 0;
+    font-family: arial;
+}
+#updates_container .update-type.closed{
+    background-color: hotPink;
+}
+#updates_container .update-type.status{
+    background-color: Indigo;
+}
+
