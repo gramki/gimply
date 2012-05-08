@@ -75,14 +75,20 @@ ListWidget.prototype.sort = function (orderedValues) {
 
 function UpdateBox(id, parent){
     if ($("#" + id).length === 0) {
-        $(parent).append('<div id="' + id + '"><textarea rows="3" cols="80"></textarea><button type="button">Post Update</button><div class="error"></div></div>');
+        $(parent).append('<div id="' + id + '"><div class="wrapper textareaWrapper"><textarea tabindex="1"  rows="3" cols="80"></textarea></div><div class="wrapper buttonWrapper"><a tabindex="1" class="button medium green">Post!</a></div><span class="hint">Ctrl+Enter to submit</span><div class="error"></div></div>');
     }
     this.container = $("#" + id)[0];
-    $("button", this.container).click((function(){
+    var raiseEnter = (function(){
         var message = $("textarea", this.container).val();
-        $("button", this.container).attr('disabled', 'disabled');
-        this.raise("enter", [message]);
-    }).bind(this));
+        $("a.button", this.container).attr('disabled', 'disabled');
+    }).bind(this);
+
+    $("a.button", this.container).click(raiseEnter);
+    $("textarea", this.container).keypress(function(e){
+        if(e.ctrlKey && e.which === 10){
+            raiseEnter();
+        }
+    });
     var widget = this;
     var cancel = $("<a></a>").addClass("cancel").attr("href", "javascript:void(0)").html("x").click(function(){
         widget.raise("cancel", [widget]);
@@ -100,7 +106,7 @@ UpdateBox.prototype.clear = function(){
 };
 
 UpdateBox.prototype.enableButton = function(){
-    $("button", this.container).removeAttr('disabled')
+    $("a.button", this.container).removeAttr('disabled')
 };
 
 UpdateBox.prototype.showError = function(msg){

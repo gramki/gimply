@@ -2,14 +2,13 @@
 
 gimply.prototype.showUpdates = function () {
     var self = this;
-    var postUpdate = $("<a id='post_update_action'></a>").addClass("action button post-update-button").html("Post Your Update");
+    var postUpdate = $("<a id='post_update_action'></a>").addClass("action post-update-button").html("Post Your Update");
     postUpdate.click(function () {
         if(self.updateBox.isVisible()){
             self.hideUpdateInput();
         }else{
             self.showUpdateInput();
         }
-        $("#gimply_updates_input").addClass("active");
     });
     $("#gimply_updates_input").append(postUpdate);
     $("#gimply_updates_input").append($("<div></div>").attr("id", "update_box_container").addClass("right"));
@@ -19,7 +18,6 @@ gimply.prototype.showUpdates = function () {
     }).bind(this));
     this.updateBox.on('cancel', function () {
         self.hideUpdateInput();
-        $("#gimply_updates_input").removeClass("active");
     });
     this.hideUpdateInput();
 
@@ -70,11 +68,13 @@ gimply.prototype.showUpdates = function () {
 };
 
 gimply.prototype.showUpdateInput = function () {
+    $("#gimply_updates_input").addClass("active");
     $(this.updateBox.container).show();
     $("textarea", this.updateBox.container)[0].focus();
 }
 gimply.prototype.hideUpdateInput = function () {
     $(this.updateBox.container).hide();
+    $("#gimply_updates_input").removeClass("active");
 }
 
 gimply.prototype.filterEvents = _.throttle(function () {
