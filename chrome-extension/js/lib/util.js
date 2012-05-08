@@ -68,17 +68,21 @@ _.mixin({
     git_message: function(msg, repoName){
         //Converts git message to html
         msg = msg.replace(/\r?\n/g, "<br/>");
-        var matches = msg.match(/\W?[0-9a-f]{5,50}\W?/g);
-        _.chain(matches).uniq().filter(function(txt){
-            return !!txt.match(/[0-9]+/);
-        }).each(function(sha){
-            msg = msg.replace(new RegExp(sha, "g"), _.sha_html(sha, repoName)[0].outerHTML);
-        });
-        matches = msg.match(/#[0-9]+/g);
-        if(matches){
-            _.chain(matches).uniq().each(function(numWithHash){
-                msg = msg.replace(new RegExp(numWithHash, "g"), _.issue_html(numWithHash.substr(1), repoName)[0].outerHTML);
-            });
+        try {
+            var matches = msg.match(/\W?[0-9a-f]{5,50}\W?/g);
+            _.chain(matches).uniq().filter(function(txt){
+                return !!txt.match(/[0-9]+/);
+            }).each(function(sha){
+                    msg = msg.replace(new RegExp(sha, "g"), _.sha_html(sha, repoName)[0].outerHTML);
+                });
+            matches = msg.match(/#[0-9]+/g);
+            if(matches){
+                _.chain(matches).uniq().each(function(numWithHash){
+                    msg = msg.replace(new RegExp(numWithHash, "g"), _.issue_html(numWithHash.substr(1), repoName)[0].outerHTML);
+                });
+            }
+        }catch(e){
+            console.error(e);
         }
         return msg;
     },
