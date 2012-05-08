@@ -1,5 +1,4 @@
 gimply.prototype.showOAuthPage = function () {
-    this._removeGithubElements();
     var oauthUrl = 'https://github.com/login/oauth/authorize?client_id=e84573e67eb8bed0bf6e&scope=repo&redirect_uri=http%3A%2F%2Fgimply.herokuapp.com%2Fauth%2Fgithub%2Fcallback';
     var div = $("<div id='oauth'></div>");
     var p = $("<p></p>").html("Gimply requires your authorization to access github repositories you can access.");
@@ -18,7 +17,6 @@ gimply.prototype.showOAuthPage = function () {
 }
 
 gimply.prototype.showUserMismatch = function () {
-    this._removeGithubElements();
     $("#gimply_updates_container").append($("<p></p>").html("User registered with extension is different from the user currently using github"));
 }
 

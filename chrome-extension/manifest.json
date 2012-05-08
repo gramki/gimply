@@ -10,6 +10,7 @@
                 "js/lib/util.js",
                 "js/widgets.js",
                 "js/github_content.js",
+                "js/gimply_ui.js",
                 "js/user_creds.js"
             ],
             "css": [ "style.css" ],
