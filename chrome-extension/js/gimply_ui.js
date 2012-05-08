@@ -51,9 +51,9 @@ gimply.prototype.showUpdates = function () {
     });
     //For some reason, anchor tags are not working when injected through content script
     $(this.updates.container).on("click", "a", function(e){
-        if(this.attr("href").indexOf("#") !== 0 && this.attr("href").indexOf("javascript:") !== 0){
+        if(this.href.indexOf("#") !== 0 && this.href.indexOf("javascript:") !== 0){
             e.stopPropagation();
-            window.location.href = this.attr("href");
+            window.location.href = this.href;
         }
     });
     this.fetchEvents();
