@@ -42,7 +42,7 @@ gimply.prototype.showUpdates = function () {
         this.filterEvents();
     }).bind(this));
 
-    this.updates = new ListWidget("updates_container", "#gimply_updates_container");
+    this.updates = new ListWidget("updates_container", "#gimply_updates_container", {selectable: false});
     $(this.updates.container).addClass("right");
     $(this.updates.container).on("click", ".commit-message", function (e) {
         if(e.target === this){
