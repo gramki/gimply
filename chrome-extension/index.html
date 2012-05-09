@@ -34,7 +34,7 @@
                         filter:request.filter});
                     break;
                 case "fetchContributors":
-                    port.postMessage({type:"contributors", payload:repository.contributors, repo:repository.name});
+                    port.postMessage({type:"contributors", payload:repository.getActiveContributors(), repo:repository.name});
                     break;
                 case "postStatusUpdate":
                     repository.postStatusUpdate(request.body);

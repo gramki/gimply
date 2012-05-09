@@ -75,7 +75,9 @@ Repository.prototype.initialFetch = function(){
 };
 
 Repository.prototype._isRequiredEvent = function(event){
-    return event.type === "PushEvent" || event.type === "IssuesEvent" || (event.type === "IssueCommentEvent" && event.payload.issue.number === this._STATUS_UPDATE_ISSUE_NUMBER);
+    return event.type === "PushEvent" ||
+        (event.type === "IssuesEvent" && _(['closed', 'reopened']).include(event.payload.action) ) ||
+        (event.type === "IssueCommentEvent" && event.payload.issue.number === this._STATUS_UPDATE_ISSUE_NUMBER);
 }
 Repository.prototype.addEvent = function (event) {
     if (this.eventsById[event.id]) {
@@ -94,6 +96,7 @@ Repository.prototype.addEvent = function (event) {
         var contributor = this.contributors[event.actor.login];
         if((contributor.latest_update_at||0) < event.created_at){
             contributor.latest_update_at = event.created_at;
+            contributor.last_event = event.id;
         }
         this._requiredEventCount++;
     }
@@ -181,6 +184,12 @@ Repository.prototype.fetchContributors = function(){
         _(contributors).each(this.addContributor.bind(this));
     }).bind(this));
 };
+
+Repository.prototype.getActiveContributors = function(){
+    return _(this.contributors).filter(function(contributor){
+        return !!contributor.latest_update_at;
+    });
+}
 
 Repository.prototype.fetchMilestones = function(){
     var url = "https://api.github.com/repos/" + this.name + "/milestones?access_token=" + this.github._access_token;
