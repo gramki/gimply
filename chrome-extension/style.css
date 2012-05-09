@@ -29,11 +29,13 @@
 #contributors li:hover {
     background-color: #3eb2db;
     color: white;
+    border-radius: 6px;
 }
 
 #contributors .ui-selected {
     background-color: #F39814;
     color: white;
+    border-radius: 6px;
 }
 
 #gimply_updates_input .right, #gimply_updates_container .right {
