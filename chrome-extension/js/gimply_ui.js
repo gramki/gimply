@@ -77,7 +77,10 @@ gimply.prototype.hideUpdateInput = function () {
     $("#gimply_updates_input").removeClass("active");
 }
 
-gimply.prototype.filterEvents = _.throttle(function () {
+gimply.prototype.filterEvents = function() {
+    if(!this.isUpdatesTab()){
+        return;
+    }
     this.port.postMessage({type:"fetchContributors"});
     this.port.postMessage({
         type:"filterEvents",
@@ -85,7 +88,8 @@ gimply.prototype.filterEvents = _.throttle(function () {
             login:this.contributors.selected.length ? this.contributors.selected.join(",") : this.getCurrentUser()
         }
     });
-}, 1000);
+}
+
 
 gimply.prototype.fetchEvents = function () {
     this.port.postMessage({type:"fetchEvents"});
@@ -93,6 +97,9 @@ gimply.prototype.fetchEvents = function () {
 }
 
 gimply.prototype.updateContributors = function(contributors){
+    if(!this.isUpdatesTab()){
+        return;
+    }
     _(contributors).each(function(contributor){
         this.contributors.add(contributor.login, "contributor_" + contributor.login, contributor.login);
     }, this);
@@ -104,6 +111,9 @@ gimply.prototype.updateContributors = function(contributors){
 
 
 gimply.prototype.addEvents = function (events) {
+    if(!this.isUpdatesTab()){
+        return;
+    }
     this.updates.empty();
     this.hideLoading();
     var lastEvent = null;
