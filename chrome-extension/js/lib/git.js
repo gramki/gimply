@@ -83,9 +83,12 @@ Repository.prototype.addEvent = function (event) {
     this.events.splice(index, 0, event);
     this.eventsById[event.id] = event;
 
-    if(event.actor && this.contributors[event.actor.login]){
+    if(event.actor){
+        if(!this.contributors[event.actor.login]){
+            this.addContributor(event.actor);
+        }
         var contributor = this.contributors[event.actor.login];
-        if(contributor && ((contributor.latest_update_at||0) < event.created_at)){
+        if((contributor.latest_update_at||0) < event.created_at){
             contributor.latest_update_at = event.created_at;
         }
     }
