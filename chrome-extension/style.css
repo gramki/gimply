@@ -16,6 +16,7 @@
     border-right: solid 2px #ddd;
     padding-right: 4px;
     min-height: 150px;
+    max-height: 450px;
 }
 
 #contributors li {
