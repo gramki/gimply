@@ -38,7 +38,7 @@ gimply.prototype.showUpdates = function () {
     $("#gimply_updates_container").append(actionBar);
 
     this.contributors = new ListWidget("contributors", "#gimply_updates_container");
-    this.contributors.setDefault(this.getCurrentUser());
+    this.contributors.setDefault("contributor_" + this.getCurrentUser());
     this.contributors.on('select', (function(){
         this.updates.empty();
         this.showLoading();

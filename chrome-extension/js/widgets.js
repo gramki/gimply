@@ -6,15 +6,22 @@ function ListWidget(id, parent, options) {
     this.container = $("#" + id)[0];
     this.selected = [];
     var widget = this;
-    if(!options || options.selectable !== false){
+    this.options = options || {};
+    // Indicates that the current selection was made by selectDefault call (not by user)
+    this._autoSelect = false;
+    if(this.options.selectable !== false){
         $(this.container).selectable({
+            start: function(){
+                widget._autoSelect = false;
+            },
             stop:function (event, ui) {
                 var selected = _($(".ui-selected", this)).invoke("getAttribute", "data-list-value");
                 widget.selected = selected;
                 if (selected.length) {
                     widget.raise("select", selected);
                 }else{
-                    widget.selectDefault();
+                    console.error("None selected!");
+                    //widget.selectDefault();
                 }
             }
         });
@@ -30,8 +37,33 @@ ListWidget.prototype.setDefault = function(id){
 };
 
 ListWidget.prototype.selectDefault = function(){
-    this._default && $("#" + this._default, this.container).click();
+    var idToSelect;
+    if(this._default && $("#" + this._default, this.container).length){
+        idToSelect = this._default;
+    }else{
+        if( $("li:first", this.container).length ){
+            idToSelect = $("li:first", this.container)[0].getAttribute("id");
+        }
+    }
+    if(!_(this.selected).include(idToSelect)){
+        this._selectElements($("#" + idToSelect, this.container));
+        this._autoSelect = true;
+    }
 };
+
+ListWidget.prototype._selectElements = function (elementsToSelect)
+{
+    if($(this.container).data("selectable")){
+        $("li", this.container).removeClass("ui-selected");
+        $(elementsToSelect).addClass("ui-selected");
+        var stop = $(this.container).data("selectable").options.stop;
+        stop.apply(this.container);
+    }
+    return;
+    // Tried code in the post :
+    // http://stackoverflow.com/questions/3140017/how-to-programmatically-select-selectables-with-jquery-ui
+    // There seem to be some issue due to different JS context in which content script runs.
+}
 
 ListWidget.prototype.add = function (innerHTML, id, value) {
     if (id && this.has(id)) {
@@ -50,6 +82,12 @@ ListWidget.prototype.add = function (innerHTML, id, value) {
         li.append(innerHTML);
     }
     $(this.container).append(li);
+    if(this.options.selectable !== false && (this._autoSelect || !this.selected || !this.selected.length)){
+        if(!this._throttledDefaultSelector){
+            this._throttledDefaultSelector = _.throttle(this.selectDefault.bind(this), 50);
+        }
+        this._throttledDefaultSelector();
+    }
 }
 ListWidget.prototype.empty = function () {
     $(this.container).empty();
