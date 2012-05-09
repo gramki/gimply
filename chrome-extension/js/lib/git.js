@@ -59,6 +59,7 @@ function Repository(name, githubObj) {
     this.github = githubObj;
     this.name = name;
     this.events = [];
+    this._requiredEventCount = 0;
     this.contributors = {};
     this.milestones = {};
     this.eventsById = {};
@@ -73,6 +74,9 @@ Repository.prototype.initialFetch = function(){
     this.fetchMilestones();
 };
 
+Repository.prototype._isRequiredEvent = function(event){
+    return event.type === "PushEvent" || event.type === "IssuesEvent" || (event.type === "IssueCommentEvent" && event.payload.issue.number === this._STATUS_UPDATE_ISSUE_NUMBER);
+}
 Repository.prototype.addEvent = function (event) {
     if (this.eventsById[event.id]) {
         return false;
@@ -83,7 +87,7 @@ Repository.prototype.addEvent = function (event) {
     this.events.splice(index, 0, event);
     this.eventsById[event.id] = event;
 
-    if(event.actor){
+    if(event.actor && this._isRequiredEvent(event)){
         if(!this.contributors[event.actor.login]){
             this.addContributor(event.actor);
         }
@@ -91,6 +95,7 @@ Repository.prototype.addEvent = function (event) {
         if((contributor.latest_update_at||0) < event.created_at){
             contributor.latest_update_at = event.created_at;
         }
+        this._requiredEventCount++;
     }
     switch(event.type){
         case "IssuesEvent":
@@ -149,7 +154,7 @@ Repository.prototype.fetchEvents = function () {
     var url = "https://api.github.com/repos/" + this.name + "/events?access_token=" + this.github._access_token;
     paginatedGet(url, (function(events){
         var didNotFindOverlap = _(events).all(this.addEvent.bind(this));
-        var canFetchMore = (this.oldestEvent().created_at > this.github._cutoff_time);
+        var canFetchMore = (this._requiredEventCount < 500)?true:(this.oldestEvent().created_at > this.github._cutoff_time);
         return canFetchMore && didNotFindOverlap;
     }).bind(this));
 };

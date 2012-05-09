@@ -59,7 +59,7 @@ gimply.prototype.onUpdatesTabSelect = function(){
 
 
 gimply.prototype.getCurrentRepoName = function(){
-    return _(window.location.href.match("https://github.com/(\\w+)/(\\w+)")).rest().join("/");
+    return _(window.location.href.match("https://github.com/([^\/]+)/([^\/#]+)")).rest().join("/");
 };
 
 gimply.prototype.getCurrentUser = function(){
