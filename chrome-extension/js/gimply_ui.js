@@ -2,7 +2,7 @@
 
 gimply.prototype.addUpdatesInput = function(){
     var self = this;
-    if(!this.isUpdatesTab()){
+    if(!this.isUpdatesTab() || $("#post_update_action").length !== 0 ){
         return;
     }
     var postUpdate = $("<a id='post_update_action'></a>").addClass("action post-update-button").html("Post Your Update");

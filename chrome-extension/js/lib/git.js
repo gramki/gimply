@@ -138,6 +138,7 @@ Repository.prototype.postStatusUpdate = function (message) {
         data: JSON.stringify({ body: message}),
         success: function(comment){
             self.github.raise("status-update-success", [comment, self.name]);
+            self.fetchEvents();
         },
         error: function(xhr, status, e){
             console.error("status-update-failure", message, xhr, e);
