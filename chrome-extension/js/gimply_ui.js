@@ -64,6 +64,7 @@ gimply.prototype.showUpdates = function () {
             window.location.href = this.href;
         }
     });
+    this._addLogo();
     this.fetchEvents();
 };
 
@@ -276,4 +277,16 @@ gimply.prototype.showLoading = function(){
 gimply.prototype.hideLoading = function(){
     var loading = $("#gimply_updates_container #loading");
     loading.hide();
+}
+
+gimply.prototype._addLogo = function(){
+    if($("#gimply_promo").length !== 0){
+        return;
+    }
+    var img = $('<img/>').attr("src", chrome.extension.getURL("images/gimply_logo_small.png")).attr("title", "http://gimply.com");
+    img.click(function(){
+        window.open("http://gimply.com");
+    });
+    var div = $("<div id='gimply_promo'></div>").append(img);
+    $("#gimply_updates_container").append(div);
 }

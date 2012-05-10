@@ -18,7 +18,16 @@
     min-height: 150px;
     max-height: 450px;
 }
-
+#gimply_promo {
+    position: absolute;
+    left: 0;
+    top: 455px;
+    padding-left: 5px;
+}
+#gimply_promo img {
+    height: 20px;
+    cursor: pointer;
+}
 #contributors li {
     font-family: Helvetica, arial, freesans, clean, sans-serif;
     font-size: 14px;
