@@ -1,4 +1,10 @@
 {
+    "name":"Gimply",
+    "description":"Updates from a Github",
+    "icons": {
+        "128": "images/gimply128.png",
+        "48": "images/gimply48.png"
+    },
     "content_scripts":[
         {
             "matches":["https://github.com/*"],
@@ -25,8 +31,6 @@
     "background":{
         "page":"index.html"
     },
-    "description":"Updates from a Git Project",
-    "name":"Gimply",
     "permissions":["https://api.github.com/", "unlimitedStorage", "notifications"],
     "version":"0.0.1"
 }
