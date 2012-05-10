@@ -119,6 +119,7 @@ function UpdateBox(id, parent){
     var raiseEnter = (function(){
         var message = $("textarea", this.container).val();
         $("a.button", this.container).attr('disabled', 'disabled');
+        this.raise('enter', [message]);
     }).bind(this);
 
     $("a.button", this.container).click(raiseEnter);
