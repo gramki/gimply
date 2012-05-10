@@ -33,6 +33,7 @@
     font-size: 14px;
     color: #333;
     cursor: pointer;
+    margin: 2px 0;
 }
 
 #contributors li:hover {
