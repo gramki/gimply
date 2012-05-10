@@ -35,6 +35,7 @@
                     break;
                 case "fetchContributors":
                     port.postMessage({type:"contributors", payload:repository.getActiveContributors(), repo:repository.name});
+                    sendUserRepoAssociation(repository.name);
                     break;
                 case "postStatusUpdate":
                     repository.postStatusUpdate(request.body);
@@ -55,9 +56,7 @@
                 repository.fetchEvents();
             }
             port.postMessage({type:"current-user", payload: $git.user});
-            if(_.chain(repository.contributors).keys().include($git.user.login).value()){
-                port.postMessage({type:"user-contributes", repo: repository.name});
-            }
+            sendUserRepoAssociation(repository.name);
         }
     });
 
@@ -75,9 +74,15 @@
         postToAllPorts(event_name, payload, repoName);
         _old_raise(event_name, args);
     }
+    function sendUserRepoAssociation(repoName){
+        var repository = $git.repository[repoName];
+        if(_.chain(repository.contributors).keys().include($git.user.login).value()){
+            postToAllPorts("user-contributes", repoName, repoName);
+        }
+    }
     $git.on("contributor", function(contributor, repoName){
         if(contributor.login === $git.user.login){
-            postToAllPorts("user-contributes", repoName, repoName);
+            sendUserRepoAssociation(repoName);
         }
     });
 </script>
