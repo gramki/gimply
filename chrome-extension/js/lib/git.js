@@ -110,9 +110,6 @@ Repository.prototype.addEvent = function (event) {
             }
             break;
     }
-    this.github.raise(event.type, [event, this.name]);
-    this.github.raise("event", [event, this.name]);
-    console.warn("Added event: ", event);
     return true;
 }
 
@@ -156,9 +153,12 @@ Repository.prototype.oldestEvent = function () {
 Repository.prototype.fetchEvents = function () {
     var url = "https://api.github.com/repos/" + this.name + "/events?access_token=" + this.github._access_token;
     paginatedGet(url, (function(events){
-        var didNotFindOverlap = _(events).all(this.addEvent.bind(this));
+        var addedEventCount = _.chain(events).map(this.addEvent.bind(this)).compact().size().value();
+        if(addedEventCount){
+            this.github.raise("new-event", [{}, this.name]);
+        }
         var canFetchMore = (this._requiredEventCount < 500)?true:(this.oldestEvent().created_at > this.github._cutoff_time);
-        return canFetchMore && didNotFindOverlap;
+        return canFetchMore && addedEventCount === events.length;
     }).bind(this));
 };
 

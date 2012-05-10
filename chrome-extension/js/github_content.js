@@ -75,7 +75,7 @@ gimply.prototype.init_events = function () {
             case "filtered-events":
                 this.addEvents(msg.payload);
                 break;
-            case "event":
+            case "new-event":
                 this.filterEvents();
                 break;
             case "contributors":
