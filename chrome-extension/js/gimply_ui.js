@@ -1,7 +1,10 @@
 "use strict";
 
-gimply.prototype.showUpdates = function () {
+gimply.prototype.addUpdatesInput = function(){
     var self = this;
+    if(!this.isUpdatesTab()){
+        return;
+    }
     var postUpdate = $("<a id='post_update_action'></a>").addClass("action post-update-button").html("Post Your Update");
     postUpdate.click(function () {
         if(self.updateBox.isVisible()){
@@ -20,9 +23,21 @@ gimply.prototype.showUpdates = function () {
         self.hideUpdateInput();
     });
     this.hideUpdateInput();
+}
 
+gimply.prototype.showUpdateInput = function () {
+    $("#gimply_updates_input").addClass("active");
+    $(this.updateBox.container).show();
+    $("textarea", this.updateBox.container)[0].focus();
+}
+gimply.prototype.hideUpdateInput = function () {
+    $(this.updateBox.container).hide();
+    $("#gimply_updates_input").removeClass("active");
+}
+
+gimply.prototype.showUpdates = function () {
+    var self = this;
     this._showCommits = true;
-
     var toggleCommits = $("<a href='javascript:void(0)'></a>").addClass("action toggle").html("Hide Commits");
     toggleCommits.click(function () {
         if ($(this).html() === "Hide Commits") {
@@ -67,16 +82,6 @@ gimply.prototype.showUpdates = function () {
     this._addLogo();
     this.fetchEvents();
 };
-
-gimply.prototype.showUpdateInput = function () {
-    $("#gimply_updates_input").addClass("active");
-    $(this.updateBox.container).show();
-    $("textarea", this.updateBox.container)[0].focus();
-}
-gimply.prototype.hideUpdateInput = function () {
-    $(this.updateBox.container).hide();
-    $("#gimply_updates_input").removeClass("active");
-}
 
 gimply.prototype.filterEvents = function() {
     if(!this.isUpdatesTab()){

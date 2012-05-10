@@ -99,6 +99,11 @@ gimply.prototype.init_events = function () {
                 this.registeredUser = msg.payload;
                 this.onRegisteredUserChange(this.registeredUser);
                 break;
+            case "user-contributes":
+                if(msg.repo === this.getCurrentRepoName()){
+                    this.addUpdatesInput();
+                }
+                break;
         }
     }).bind(this));
 }

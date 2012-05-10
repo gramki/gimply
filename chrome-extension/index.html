@@ -49,25 +49,37 @@
         if($git.user === null || !$git.hasAccessToken()){
             port.postMessage({type:"invalid-token"});
         }else{
-            port.postMessage({type:"current-user", payload: $git.user});
             repository = $git.addRepository(port.name);
             var oneHour = 60 * 60 * 1000;
             if (((new Date()) - repository.lastFetchTime) > oneHour) {
                 repository.fetchEvents();
             }
+            port.postMessage({type:"current-user", payload: $git.user});
+            if(_.chain(repository.contributors).keys().include($git.user.login).value()){
+                port.postMessage({type:"user-contributes", repo: repository.name});
+            }
         }
     });
-    var _old_raise = $git.raise.bind($git);
-    $git.raise = function (event_name, args) {
-        var payload = args[0];
-        var repoName = args[1];
+
+    function postToAllPorts(event_name, payload, repoName){
         _(openPorts).each(function (port) {
             if (port.name === repoName) {
                 port.postMessage({type:event_name, payload:payload, repo:repoName});
             }
         });
+    }
+    var _old_raise = $git.raise.bind($git);
+    $git.raise = function (event_name, args) {
+        var payload = args[0];
+        var repoName = args[1];
+        postToAllPorts(event_name, payload, repoName);
         _old_raise(event_name, args);
     }
+    $git.on("contributor", function(contributor, repoName){
+        if(contributor.login === $git.user.login){
+            postToAllPorts("user-contributes", repoName, repoName);
+        }
+    });
 </script>
 
 <script type="text/javascript">
