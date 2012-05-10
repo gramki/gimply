@@ -1,9 +1,11 @@
 gimply.prototype.showOAuthPage = function () {
     var oauthUrl = 'https://github.com/login/oauth/authorize?client_id=e84573e67eb8bed0bf6e&scope=repo&redirect_uri=http%3A%2F%2Fgimply.herokuapp.com%2Fauth%2Fgithub%2Fcallback';
     var div = $("<div id='oauth'></div>");
-    var p = $("<p></p>").html("Gimply requires your authorization to access github repositories you can access.");
-    var btn = $("<button type='button' id='token'></button>").html("Authroize Gimply");
-    div.append(p).append(btn);
+    var logo = $("<img/>").attr("src", chrome.extension.getURL("images/gimply_logo.png")).addClass("logo");
+    var p = $("<p></p>").html("see nice consolidated view of recent updates by contributor<br/>authorize gimply to access the github repositories you visit");
+    var p2 =$("<p class='sub'></p>").html("");
+    var btn = $("<a class='button logo-color' href='javascript:void(0)' id='token'></a>").html("authroize gimply");
+    div.append(logo).append(p).append(p2).append(btn);
     $("#gimply_updates_container").append(div);
     btn.click(function(){
         chrome.extension.sendRequest({

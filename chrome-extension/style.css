@@ -27,13 +27,13 @@
 }
 
 #contributors li:hover {
-    background-color: #3eb2db;
+    background-color: #AA8DE2;
     color: white;
     border-radius: 6px;
 }
 
 #contributors .ui-selected {
-    background-color: #F39814;
+    background-color: #924bb8;
     color: white;
     border-radius: 6px;
 }
@@ -62,7 +62,7 @@
     cursor: pointer;
     text-decoration: none;
     font-weight: bold;
-    color: #3eb2db;
+    color: #8a3eb0;
 }
 
 #updates_container {
@@ -73,7 +73,7 @@
 #updates_container .date {
     font-size: 1.3em;
     font-weight: bold;
-    color: #4183C4;
+    color: #555;
     margin-top: 2px;
     margin-bottom: -4px;
 }
@@ -114,14 +114,16 @@
 .commit .commit-sha {
     display: none;
 }
-.commit .sha, .issue-entry .issue-number {
-    margin: 0 4px;
-    border: 1px dotted;
-    border-radius: 4px;
+.commit .sha, .issue-entry .issue-number a, .push-details .branch-name a {
     padding: 0 2px;
     font-size: 11px;
+    color: #af72db;
 }
-
+.commit .sha, .issue-entry .issue-number a {
+    margin: 0 4px;
+    border: 1px dotted #af72db;
+    border-radius: 4px;
+}
 #updates_container .update .time {
     display: none;
 }
@@ -177,45 +179,60 @@
     cursor: pointer;
 }
 
-#oauth button {
+#oauth .button {
+    font-size: 15px;
     color: white;
-    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
-    font-weight: bold;
-    cursor: pointer;
-    rgba(0, 0, 0, 0.3);
-    background: #4794BC;
-    background: -webkit-linear-gradient( #4794BC, #3A7999);
-    border-bottom-color: #438BB1;
-    padding: 4px 10px;
-}
-
-#updates_container .update-type {
-    font-size: 11px;
-    background-color: #DDD;
-    border-radius: 2px;
-    margin: 0 3px 0 0;
-    color: white;
-    min-width: 45px;
-    display: inline-block;
-    text-align: center;
-    font-weight: bold;
-    font-size: 10px;
-    padding: 0;
     font-family: arial;
 }
 
+#oauth {
+    text-align: center;
+    font-size: 17px;
+    font-family: cambria, arial;
+    color: #777;
+    padding-bottom: 30px;
+    line-height: 1.3em;
+}
+
+#oauth .logo {
+    height: 100px;
+    margin-bottom: 15px;
+}
+
+#updates_container .update-header {
+    max-width: 285px;
+    margin-bottom: 4px;
+    background: -webkit-gradient(linear, left bottom, right bottom, from(#E6E6E6), to(white));
+    margin-left: -4px;
+    padding-left: 4px;
+}
+#updates_container .update-type {
+    margin: 0 3px 0 0;
+    display: inline-block;
+    font-family: arial;
+    color: #888;
+    padding: 0;
+    text-align: left;
+    font-size: 12px;
+    font-weight: normal;
+}
+#updates_container span.update-type:first-letter{
+    text-transform: capitalize;
+}
+/*
 #updates_container .update-type.pushed{
-    background-color: hotPink;
+    background-color: #C6AAE2;
 }
 #updates_container .update-type.reopened {
-    background-color: Chocolate;
+    background-color: #EDC795;
 }
 #updates_container .update-type.closed{
-    background-color: SeaGreen;
+    background-color: #b5d991;
 }
 #updates_container .update-type.status{
     background-color: CornflowerBlue;
 }
+*/
 #loading {
     position: absolute;
     left: 200px;
@@ -280,9 +297,28 @@ button
     filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#4e7d0e', endColorstr='#7db72f');
 }
 
+.logo-color {
+    background: -webkit-gradient( linear, left bottom, left top, color-stop(0.1,#8908D4), color-stop(0.55,#AD5EDB), color-stop(0.78, #B963EB));
+    color: white;
+    font-family: arial;
+    font-size: 15px;
+    margin-top: 25px;
+}
+.logo-color:hover {
+    background: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.1, rgb(145,18,224)),
+        color-stop(0.55, rgb(173,94,219)),
+        color-stop(0.78, rgb(202,147,237))
+    );
+}
+
+
 #update_input .wrapper.buttonWrapper {
     padding-bottom: 5px;
-    padding-left: 8 px;
+    padding-left: 8px;
 }
 #update_input .wrapper {
     display: table-cell;

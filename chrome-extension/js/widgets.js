@@ -113,7 +113,7 @@ ListWidget.prototype.sort = function (orderedValues) {
 
 function UpdateBox(id, parent){
     if ($("#" + id).length === 0) {
-        $(parent).append('<div id="' + id + '"><div class="wrapper textareaWrapper"><textarea tabindex="1"  rows="3" cols="80"></textarea></div><div class="wrapper buttonWrapper"><a tabindex="1" class="button medium green">Post!</a></div><span class="hint">Ctrl+Enter to submit</span><div class="error"></div></div>');
+        $(parent).append('<div id="' + id + '"><div class="wrapper textareaWrapper"><textarea tabindex="1"  rows="3" cols="80"></textarea></div><div class="wrapper buttonWrapper"><a tabindex="1" class="button medium logo-color">Post!</a></div><span class="hint">Ctrl+Enter to submit</span><div class="error"></div></div>');
     }
     this.container = $("#" + id)[0];
     var raiseEnter = (function(){
