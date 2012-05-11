@@ -1,40 +1,5 @@
 "use strict";
 
-gimply.prototype.addUpdatesInput = function(){
-    var self = this;
-    if(!this.isUpdatesTab() || $("#post_update_action").length !== 0 ){
-        return;
-    }
-    var postUpdate = $("<a id='post_update_action'></a>").addClass("action post-update-button").html("Post Your Update");
-    postUpdate.click(function () {
-        if(self.updateBox.isVisible()){
-            self.hideUpdateInput();
-        }else{
-            self.showUpdateInput();
-        }
-    });
-    $("#gimply_updates_input").append(postUpdate);
-    $("#gimply_updates_input").append($("<div></div>").attr("id", "update_box_container").addClass("right"));
-    this.updateBox = new UpdateBox("update_input", "#update_box_container");
-    this.updateBox.on('enter', (function (txt) {
-        this.port.postMessage({ type:"postStatusUpdate", body:txt});
-    }).bind(this));
-    this.updateBox.on('cancel', function () {
-        self.hideUpdateInput();
-    });
-    this.hideUpdateInput();
-}
-
-gimply.prototype.showUpdateInput = function () {
-    $("#gimply_updates_input").addClass("active");
-    $(this.updateBox.container).show();
-    $("textarea", this.updateBox.container)[0].focus();
-}
-gimply.prototype.hideUpdateInput = function () {
-    $(this.updateBox.container).hide();
-    $("#gimply_updates_input").removeClass("active");
-}
-
 gimply.prototype.showUpdates = function () {
     var self = this;
     this._showCommits = true;

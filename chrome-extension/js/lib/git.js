@@ -65,7 +65,16 @@ function Repository(name, githubObj) {
     this.eventsById = {};
     this.lastFetchTime = 0;
     this.issues = {};
-    this._STATUS_UPDATE_ISSUE_NUMBER = 1;
+    this.gimply_status = {
+        is_gimply: false,
+        current_issue_number: 0,
+        status_unknown: true
+    };
+    this.user_status = {
+        permissions: {}
+    };
+    this.checkGimplyStatus();
+    this.checkUserStatus();
     this.initialFetch();
 }
 
@@ -77,7 +86,7 @@ Repository.prototype.initialFetch = function(){
 Repository.prototype._isRequiredEvent = function(event){
     return event.type === "PushEvent" ||
         (event.type === "IssuesEvent" && _(['closed', 'reopened']).include(event.payload.action) ) ||
-        (event.type === "IssueCommentEvent" && event.payload.issue.number === this._STATUS_UPDATE_ISSUE_NUMBER);
+        (event.type === "IssueCommentEvent" && event.payload.issue.number === this.gimply_status.current_issue_number);
 }
 Repository.prototype.addEvent = function (event) {
     if (this.eventsById[event.id]) {
@@ -105,7 +114,7 @@ Repository.prototype.addEvent = function (event) {
             this.fetchIssue(event.payload.issue.number);
             break;
         case "IssueCommentEvent":
-            if(event.payload.issue.number === this._STATUS_UPDATE_ISSUE_NUMBER){
+            if(event.payload.issue.number === this.gimply_status.current_issue_number){
                 event.type = "StatusUpdateEvent";
             }
             break;
@@ -129,7 +138,7 @@ Repository.prototype.addIssue = function(issue){
 }
 
 Repository.prototype.postStatusUpdate = function (message) {
-    var url = "https://api.github.com/repos/" + this.name + "/issues/" + this._STATUS_UPDATE_ISSUE_NUMBER + "/comments?access_token=" + this.github._access_token;
+    var url = "https://api.github.com/repos/" + this.name + "/issues/" + this.gimply_status.current_issue_number + "/comments?access_token=" + this.github._access_token;
     var self = this;
     $.ajax({
         url: url,
@@ -144,6 +153,16 @@ Repository.prototype.postStatusUpdate = function (message) {
             console.error("status-update-failure", message, xhr, e);
             self.github.raise("status-update-failure", [message, self.name]);
         }
+    });
+}
+
+Repository.prototype.createIssue = function(title, body){
+    var url = "https://api.github.com/repos/" + this.name + "/issues?access_token=" + this.github._access_token;
+    return $.ajax({
+        url: url,
+        type: "POST",
+        processData: false,
+        data: JSON.stringify({ title: title, body: body})
     });
 }
 
@@ -247,3 +266,76 @@ Github.prototype.fetchEvents = function (repoName) {
     var repository = this.addRepository(repoName);
     repository.fetchEvents();
 };
+
+
+Repository.prototype.checkGimplyStatus = function () {
+    //Check get the repo issue number
+    var self = this;
+    return $.when(gimply_app.getUpdatesIssueNumber(this.name, this.github._access_token)).then(
+        function (issueNumber) {
+            if(!issueNumber){
+                self.gimply_status.status_unknown = false;
+                return;
+            }
+            self._setIssueNumber(issueNumber);
+        },
+        function (error) {
+            if (error === 404) {
+                self.gimply_status.status_unknown = false;
+            }
+            self.gimply_status.status_unknown = true;
+        }).always(function () {
+            self.publishStatus();
+        });
+}
+
+Repository.prototype.checkUserStatus = function () {
+    var self = this;
+    $.ajax("https://api.github.com/repos/" + this.name + "?access_token=c8464af1e2daa4fc9bb6d22f46eb6573e9681e60").then(
+        function (repoRelation) {
+            if (repoRelation && repoRelation.permissions) {
+                self.user_status.permissions = repoRelation.permissions;
+            }
+        }).always(function () {
+            self.publishStatus();
+        });
+}
+
+Repository.prototype.publishStatus = function(){
+    this.github.raise("repo-status-update", [
+        {gimply_status:this.gimply_status, user_status:this.user_status},
+        this.name
+    ]);
+}
+
+Repository.prototype._setIssueNumber = function(issueNumber){
+    this.gimply_status.is_gimply = true;
+    this.gimply_status.current_issue_number = issueNumber;
+    this.gimply_status.status_unknown = false;
+}
+
+Repository.prototype.setupGimply = function(){
+    var self = this;
+    return $.when(this.checkGimplyStatus()).then(function () {
+        if (self.gimply_status.status_unknown) {
+            console.error("Cannot access Gimply App!");
+            return;
+        }
+        if (self.gimply_status.current_issue_number) {
+            self.publishStatus();
+            return;
+        }
+        $.when(self.createIssue("Gimply: Reserved for status updates",
+            "Status updates from http://gimply.com go here!\nDon't delete or close this issue.")
+        ).then(function (issue) {
+                if(!issue){
+                    console.error("Could not create new issue");
+                    return;
+                }
+                $.when(gimply_app.setUpdatesIssueNumber(self.name, issue.number, self.github._access_token)).then(function(){
+                    self._setIssueNumber(issue.number);
+                    self.publishStatus();
+                });
+        });
+    });
+}

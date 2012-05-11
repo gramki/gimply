@@ -4,6 +4,7 @@
 <script type="text/javascript" src="js/lib/jquery-171.js"></script>
 <script type="text/javascript" src="js/lib/event.js"></script>
 <script type="text/javascript" src="js/lib/util.js"></script>
+<script type="text/javascript" src="js/lib/gimply_app.js"></script>
 <script type="text/javascript" src="js/lib/git.js"></script>
 
 <script type="text/javascript">
@@ -44,6 +45,9 @@
                     $git.setAccessToken(request.token);
                     repository = $git.addRepository(port.name);
                     repository.fetchEvents();
+                    break;
+                case "setupGimply":
+                    repository.setupGimply();
                     break;
             }
         });

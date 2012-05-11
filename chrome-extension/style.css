@@ -195,7 +195,7 @@
     font-family: arial;
 }
 
-#oauth {
+#oauth, #gimply_enabler {
     text-align: center;
     font-size: 17px;
     font-family: cambria, arial;
@@ -254,7 +254,7 @@
 /********************
 button
 *********************/
-.button {
+.button, #update_box_container a.button  {
     display: inline-block;
     zoom: 1; /* zoom and *display = ie7 hack for display:inline-block */
     *display: inline;
@@ -334,7 +334,7 @@ button
     display: table-cell;
     vertical-align: bottom;
 }
-#update_input {
+#update_box_container {
     background: -webkit-linear-gradient(top,  white 0%, #E5E5E5 100%);
     border: #DDD solid 1px;
 }
@@ -344,4 +344,30 @@ button
     font-style: italic;
     display: block;
     height: 8px;
+}
+
+#gimply_enabler {
+    padding: 25px 2px;
+}
+
+#gimply_enabler .title {
+    color: #555;
+    font-size: 25px;
+    margin-bottom: 25px;
+    margin-top: 5px;
+}
+
+#gimply_enabler .how {
+    margin: 24px 0;
+    font-family: arial;
+    font-size: 13px;
+    line-height: 18px;
+}
+#gimply_enabler .what {
+    font-family: arial;
+    margin-top: 45px;
+    font-size: 16px;
+}
+#gimply_enabler .em {
+    color: #924bb8;
 }

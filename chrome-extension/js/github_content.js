@@ -104,6 +104,12 @@ gimply.prototype.init_events = function () {
                     this.addUpdatesInput();
                 }
                 break;
+            case "repo-status-update":
+                console.warn("Repo status", msg);
+                if(msg.payload.gimply_status.is_gimply){
+                    console.warn("This is a gimply enabled repo");
+                }
+                this.onRepoStatusUpdate(msg.payload);
         }
     }).bind(this));
 }

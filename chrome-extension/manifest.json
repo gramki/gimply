@@ -16,6 +16,7 @@
                 "js/lib/util.js",
                 "js/widgets.js",
                 "js/github_content.js",
+                "js/post_status_ui.js",
                 "js/gimply_ui.js",
                 "js/user_creds.js"
             ],
@@ -23,7 +24,7 @@
             "run_at":"document_end"
         },
         {
-            "matches":["http://gimply.herokuapp.com/login_success*"],
+            "matches":["*://gimply.herokuapp.com/login_success*"],
             "js": [ "js/oauth_token_reader.js"],
             "run_at": "document_start"
         }
@@ -31,6 +32,6 @@
     "background":{
         "page":"index.html"
     },
-    "permissions":["https://api.github.com/", "unlimitedStorage", "notifications"],
+    "permissions":["https://api.github.com/", "https://gimply.herokuapp.com/", "unlimitedStorage", "notifications"],
     "version":"0.0.1"
 }
