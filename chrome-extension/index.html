@@ -83,6 +83,8 @@
         if(_.chain(repository.contributors).keys().include($git.user.login).value()){
             postToAllPorts("user-contributes", repoName, repoName);
         }
+        //should merge user-contributes event with repository status event
+        repository.publishStatus();
     }
     $git.on("contributor", function(contributor, repoName){
         if(contributor.login === $git.user.login){

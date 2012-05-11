@@ -1,3 +1,4 @@
+"use strict";
 
 gimply.prototype.addUpdatesInput = function(){
     var self = this;
@@ -37,6 +38,7 @@ gimply.prototype._addGimplyEnabler = function(){
     html += "<div class='how'>gimply adds them as comments to a github issue it will create in this repository<br/>"
     html+= "and presents them <span class='em'>nicely</span> as status updates here</div>";
 
+    var self = this;
     var enableGimply = $("<a id='enable_gimply'></a>").addClass("button logo-color").html("Enable Gimply");
     enableGimply.click(function(){
         self.port.postMessage({type:"setupGimply"});
@@ -50,6 +52,9 @@ gimply.prototype.onRepoStatusUpdate = function(repoStatus){
         this._shouldEnableGimply = true;
     }else{
         this._shouldEnableGimply = false;
+    }
+    if($("#update_box_container:visible").length !== 0){
+        this.showUpdateInput();
     }
 }
 

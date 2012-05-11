@@ -73,6 +73,9 @@ function Repository(name, githubObj) {
     this.user_status = {
         permissions: {}
     };
+    //After an update is posted, git might take a while before the event is made available
+    //in the event stream. This array holds the events until git gives them in the event stream.
+    this._success_updates = [];
     this.checkGimplyStatus();
     this.checkUserStatus();
     this.initialFetch();
@@ -114,12 +117,17 @@ Repository.prototype.addEvent = function (event) {
             this.fetchIssue(event.payload.issue.number);
             break;
         case "IssueCommentEvent":
-            if(event.payload.issue.number === this.gimply_status.current_issue_number){
-                event.type = "StatusUpdateEvent";
-            }
+            this._convertCommentToUpdate(event);
             break;
     }
     return true;
+}
+
+Repository.prototype._convertCommentToUpdate = function(event){
+    if(event.type === "IssueCommentEvent" && event.payload.issue.number === this.gimply_status.current_issue_number){
+        event.type = "StatusUpdateEvent";
+        this._removeTemporaryStatusUpdate(event);
+    }
 }
 
 Repository.prototype.addMilestone = function(milestone){
@@ -136,6 +144,26 @@ Repository.prototype.addIssue = function(issue){
     this.github.raise("issue", [issue, this.name]);
     return true;
 }
+Repository.prototype._addTemporaryStatusUpdate = function(comment){
+    this._success_updates.push( {
+        created_at: comment.created_at,
+        type: "StatusUpdateEvent",
+        actor: this.github.user,
+        payload: {
+            issue: this.issues[this.gimply_status.current_issue_number] || {number: this.gimply_status.current_issue_number},
+            comment: comment
+        }
+    });
+}
+Repository.prototype._removeTemporaryStatusUpdate = function(commentEvent){
+    if(this._success_updates.length === 0){
+        return;
+    }
+    var matches = _(this._success_updates).filter(function(tempEvent){
+        return tempEvent.payload.comment.id === commentEvent.payload.comment.id;
+    });
+    this._success_updates = _(this._success_updates).difference(matches);
+}
 
 Repository.prototype.postStatusUpdate = function (message) {
     var url = "https://api.github.com/repos/" + this.name + "/issues/" + this.gimply_status.current_issue_number + "/comments?access_token=" + this.github._access_token;
@@ -147,6 +175,7 @@ Repository.prototype.postStatusUpdate = function (message) {
         data: JSON.stringify({ body: message}),
         success: function(comment){
             self.github.raise("status-update-success", [comment, self.name]);
+            self._addTemporaryStatusUpdate(comment);
             self.fetchEvents();
         },
         error: function(xhr, status, e){
@@ -187,7 +216,11 @@ Repository.prototype.filterEvents = function(filter){
     if(filter && filter.login){
         logins = filter.login.split(",");
     }
-    return _(this.events).filter(function(event){
+    var events = this.events;
+    if(this._success_updates.length !== 0){
+        events = this._success_updates.concat(this.events);
+    }
+    return _(events).filter(function(event){
         var issue = event.payload.issue;
         return !logins || _(logins).contains(event.actor.login) || (event.type === "IssuesEvent" && issue && issue.assignee && _(logins).contains(issue.assignee.login));
     });
@@ -282,6 +315,7 @@ Repository.prototype.checkGimplyStatus = function () {
         function (error) {
             if (error === 404) {
                 self.gimply_status.status_unknown = false;
+                return;
             }
             self.gimply_status.status_unknown = true;
         }).always(function () {
@@ -302,6 +336,7 @@ Repository.prototype.checkUserStatus = function () {
 }
 
 Repository.prototype.publishStatus = function(){
+    _(this.events).each(this._convertCommentToUpdate.bind(this));
     this.github.raise("repo-status-update", [
         {gimply_status:this.gimply_status, user_status:this.user_status},
         this.name
@@ -316,7 +351,7 @@ Repository.prototype._setIssueNumber = function(issueNumber){
 
 Repository.prototype.setupGimply = function(){
     var self = this;
-    return $.when(this.checkGimplyStatus()).then(function () {
+    return $.when(this.checkGimplyStatus()).always(function () {
         if (self.gimply_status.status_unknown) {
             console.error("Cannot access Gimply App!");
             return;

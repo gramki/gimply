@@ -87,6 +87,7 @@ gimply.prototype.init_events = function () {
             case "status-update-success":
                 this.updateBox.clear();
                 this.hideUpdateInput();
+                this.filterEvents();
                 break;
             case "status-update-failure":
                 this.updateBox.showError("Sorry! Gimply failed to post your update.");
