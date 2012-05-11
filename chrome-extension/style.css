@@ -160,13 +160,8 @@
 #update_input {
     padding: 8px;
     padding-bottom: 3px;
-    background-color:
-        rgba(148, 193, 236, 0.86);
-    border: 1px solid
-    #4986D3;
-    border-radius: 5px;
     position: relative;
-    margin-right: 35px;
+    margin-right: 5px;
     margin-top: 5px;
 }
 #update_input .cancel {
@@ -183,6 +178,7 @@
 #update_input button {
     display: inline-block;
     margin: 0 5px;
+    margin-right: 25px;
     padding: 4px 10px;
     position: relative;
     bottom: 10px;
@@ -337,6 +333,7 @@ button
 #update_box_container {
     background: -webkit-linear-gradient(top,  white 0%, #E5E5E5 100%);
     border: #DDD solid 1px;
+    border-radius: 5px;
 }
 #update_input .hint {
     font-size: 8px;
