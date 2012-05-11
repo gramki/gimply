@@ -53,12 +53,14 @@ gimply.prototype.filterEvents = function() {
         return;
     }
     this.port.postMessage({type:"fetchContributors"});
-    this.port.postMessage({
-        type:"filterEvents",
-        filter:{
-            login:this.contributors.selected.length ? this.contributors.selected.join(",") : this.getCurrentUser()
-        }
-    });
+    var msg = {
+        type:"filterEvents"
+    }
+    var logins = this.contributors.selected;
+    if(!_(logins).include("*")){
+        msg.filter = {login: logins.join(",")}
+    };
+    this.port.postMessage(msg);
 }
 
 
@@ -74,12 +76,14 @@ gimply.prototype.updateContributors = function(contributors){
     _(contributors).each(function(contributor){
         this.contributors.add(contributor.login, "contributor_" + contributor.login, contributor.login);
     }, this);
+    if(contributors.length > 1 ){
+        this.contributors.add("[everyone]", "all_contributors", "*");
+    }
     var sortedLoginIds = _.chain(contributors).sortBy(function(contributor){
         return contributor.latest_update_at? (-1 * new Date(contributor.latest_update_at)) : 0;;
     }).pluck("login").value();
-    this.contributors.sort(sortedLoginIds);
+    this.contributors.sort(["*"].concat(sortedLoginIds));
 }
-
 
 gimply.prototype.addEvents = function (events) {
     if(!this.isUpdatesTab()){
@@ -90,6 +94,8 @@ gimply.prototype.addEvents = function (events) {
     var lastEvent = null;
     var updateList = this.updates;
     var self = this;
+
+    var isMultiUser = this.contributors.selected.length > 1 || _(this.contributors.selected).include("*");
 
     function _merge (mergeTo, event){
         switch(event.type){
@@ -107,6 +113,9 @@ gimply.prototype.addEvents = function (events) {
                 break;
         }
     }
+
+    var typesOrder = ["StatusUpdateEvent", "IssuesEvent", "PushEvent"];
+    var today = new Date();
 
     _.chain(events).filter(this.shouldRenderEvent.bind(this)).map(function(event){
         _.convert_dates(event, ["created_at", "updated_at"]);
@@ -134,13 +143,20 @@ gimply.prototype.addEvents = function (events) {
             reducedEvents.push(event);
         }
         return reducedEvents;
-    }, []).each(
+    }, []).sortBy(function(event){
+            //A large number - day part of the millisecond timestamp
+            //suffixed by contributor login
+            //suffixed by event type
+            return "" + (999000 + _.day_diff(today, event.created_at)) +  event.actor.login.toLowerCase() + typesOrder.indexOf(event.type);
+        }).tap(function(list){
+            console.warn("Sorted List:", list);
+        }).each(
         function (event) {
             if (!lastEvent || !_.same_day(lastEvent.created_at, event.created_at)) {
                 updateList.add(self.dateToHtml(event.created_at));
             }
             lastEvent = event;
-            updateList.add(self.toHtml(event));
+            updateList.add(self.toHtml(event, isMultiUser));
         });
 }
 
@@ -156,16 +172,20 @@ gimply.prototype.shouldRenderEvent = function (event) {
             return false;
     }
 }
-gimply.prototype.toHtml = function (update) {
-    switch (update.type) {
-        case "PushEvent":
-            return this.pushEventToHtml(update);
-        case "IssuesEvent":
-            return this.issuesEventToHtml(update);
-        case "StatusUpdateEvent":
-            return this.statusUpdateEventToHtml(update);
-        default:
-            return "";
+gimply.prototype.toHtml = function (update, isMultiUser) {
+    try {
+        switch (update.type) {
+            case "PushEvent":
+                return this.pushEventToHtml(update, isMultiUser);
+            case "IssuesEvent":
+                return this.issuesEventToHtml(update, isMultiUser);
+            case "StatusUpdateEvent":
+                return this.statusUpdateEventToHtml(update, isMultiUser);
+            default:
+                return "";
+        }
+    }catch(e){
+        console.error("failed to format event:", update);
     }
 }
 gimply.prototype.dateToHtml = function (d) {
@@ -176,10 +196,15 @@ gimply.prototype.dateToHtml = function (d) {
 }
 
 gimply.prototype.typeToHtml = function (type) {
-    return $("<span></span>").addClass("update-type").addClass(type).html(type);
+    var text = type;
+    var className = type;
+    if(type === "status") {
+        text = "updated status"
+    }
+    return $("<span></span>").addClass("update-type").addClass(className).html(text);
 }
 
-gimply.prototype.pushEventToHtml = function (event) {
+gimply.prototype.pushEventToHtml = function (event, isMultiUser) {
     // refs/heads/master
     var branchName = event.payload.ref.split("/")[2];
     var repoName = this.getCurrentRepoName();
@@ -187,7 +212,11 @@ gimply.prototype.pushEventToHtml = function (event) {
     var div = $("<div></div>").addClass("update").addClass("push");
     var type = this.typeToHtml("pushed");
     var branch = $("<span></span>").addClass("branch-name").html($("<a></a>").attr("href", "https://github.com/" + this.getCurrentRepoName() + "/tree/" + branchName).html(branchName));
-    var header = $("<div></div>").addClass("update-header push-details").append(type).append(branch);
+    var header = $("<div></div>").addClass("update-header push-details");
+    if(isMultiUser){
+        header.append($("<span class='contributor-name'></span>").html(event.actor.login));
+    }
+    header.append(type).append(branch);
     div.append(header);
 
     _(event.payload.commits).each(function (commit) {
@@ -200,10 +229,13 @@ gimply.prototype.pushEventToHtml = function (event) {
     return div;
 }
 
-gimply.prototype.statusUpdateEventToHtml = function (event) {
+gimply.prototype.statusUpdateEventToHtml = function (event, isMultiUser) {
     var repoName = this.getCurrentRepoName();
     var type = this.typeToHtml("status");
     var header = $("<div></div>").addClass("update-header");
+    if(isMultiUser){
+        header.append($("<span class='contributor-name'></span>").html(event.actor.login));
+    }
     header.append(type);
 
     var div = $("<div></div>").addClass("update").addClass("status-update");
@@ -215,12 +247,15 @@ gimply.prototype.statusUpdateEventToHtml = function (event) {
     return div.append(header).append(messages);
 }
 
-gimply.prototype.issuesEventToHtml = function (event) {
+gimply.prototype.issuesEventToHtml = function (event, isMultiUser) {
     var repoName = this.getCurrentRepoName();
     var div = $("<div></div>").addClass("update").addClass("issue");
     var type = this.typeToHtml(event.payload.action);
 
     var header = $("<div></div>").addClass("update-header");
+    if(isMultiUser){
+        header.append($("<span class='contributor-name'></span>").html(event.actor.login));
+    }
     header.append(type);
 
     var issues = $("<div></div>").addClass("issues");

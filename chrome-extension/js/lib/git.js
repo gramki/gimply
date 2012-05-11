@@ -222,7 +222,7 @@ Repository.prototype.filterEvents = function(filter){
     }
     return _(events).filter(function(event){
         var issue = event.payload.issue;
-        return !logins || _(logins).contains(event.actor.login) || (event.type === "IssuesEvent" && issue && issue.assignee && _(logins).contains(issue.assignee.login));
+        return (!logins || logins.length === 0) || _(logins).contains(event.actor.login) || (event.type === "IssuesEvent" && issue && issue.assignee && _(logins).contains(issue.assignee.login));
     });
 }
 

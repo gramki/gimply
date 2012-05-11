@@ -124,7 +124,7 @@
 .commit .commit-sha {
     display: none;
 }
-.commit .sha, .issue-entry .issue-number a, .push-details .branch-name a {
+#updates_container .commit .sha, .issue-entry .issue-number a, .push-details .branch-name a {
     padding: 0 2px;
     font-size: 11px;
     color: #af72db;
@@ -206,17 +206,17 @@
 }
 
 #updates_container .update-header {
-    max-width: 285px;
+    max-width: 500px;
     margin-bottom: 4px;
-    background: -webkit-gradient(linear, left bottom, right bottom, from(#E6E6E6), to(white));
+    background: -webkit-gradient(linear, left bottom, right bottom, from(#EBEBEB), to(white));
     margin-left: -4px;
     padding-left: 4px;
+    color: #888;
 }
 #updates_container .update-type {
     margin: 0 3px 0 0;
     display: inline-block;
     font-family: arial;
-    color: #888;
     padding: 0;
     text-align: left;
     font-size: 12px;
@@ -224,6 +224,10 @@
 }
 #updates_container span.update-type:first-letter{
     text-transform: capitalize;
+}
+#updates_container .update-header .contributor-name {
+    text-transform: capitalize;
+    margin-right: 4px;
 }
 /*
 #updates_container .update-type.pushed{
