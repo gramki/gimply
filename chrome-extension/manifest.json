@@ -1,6 +1,6 @@
 {
     "name":"Gimply",
-    "description":"Updates from a Github",
+    "description":"Nice view of commits from all branches, issues and custom updates of any repository on github.com",
     "icons": {
         "128": "images/gimply128.png",
         "48": "images/gimply48.png"
@@ -33,5 +33,5 @@
         "page":"index.html"
     },
     "permissions":["https://api.github.com/", "https://gimply.herokuapp.com/", "unlimitedStorage", "notifications"],
-    "version":"0.0.1"
+    "version":"0.0.3"
 }

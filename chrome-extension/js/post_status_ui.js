@@ -34,7 +34,7 @@ gimply.prototype.addUpdatesInput = function(){
 gimply.prototype._addGimplyEnabler = function(){
     var div = $("<div></div>").attr("id", "gimply_enabler");
     var html = "<div class='title'>Post custom updates to this repository using gimply</div>";
-    html += "<div class='what'>You and your team can post your daily stand-up meeting updates,<br/>other project related updates and accomplishments.</div>"
+    html += "<div class='what'>You and your team can post daily stand-up meeting updates,<br/>other project related updates and accomplishments.</div>"
     html += "<div class='how'>gimply adds them as comments to a github issue it will create in this repository<br/>"
     html+= "and presents them <span class='em'>nicely</span> as status updates here</div>";
 
