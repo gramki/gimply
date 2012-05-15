@@ -141,7 +141,7 @@
 
 #gimply_updates_container .actionBar {
     position: absolute;
-    right: 0;
+    right: -80px;
     top: 0;
 }
 #gimply_updates_container .actionBar a {
@@ -150,10 +150,43 @@
     margin: 4px;
     cursor: pointer;
     font-family: arial;
-    font-size: 11px;
     text-decoration: none;
     color: #bbb;
+    border-radius: 6px;
 }
+#gimply_updates_container .actionBar a:hover {
+    background-color: #E5E5E5;
+}
+#gimply_updates_container .actionBar a span {
+    font-size: 12px;
+    display: inline-block;
+    margin-left: 4px;
+    position: relative;
+    bottom: 2px;
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    *margin-right: .3em;
+    line-height: 14px;
+    vertical-align: text-top;
+    background-image: url("images/glyphicons-halflings.png");
+    background-position: 14px 14px;
+    background-repeat: no-repeat;
+}
+
+.icon-ok {
+    background-position: -288px 0;
+}
+
+.icon-remove {
+    background-position: -312px 0;
+}
+
+
 #update_box_container {
     margin-top: -10px;
 }

@@ -3,10 +3,15 @@
 gimply.prototype._toggleButton = function(name, truthHtml, falseHtml, onChangeCallback){
     var currentValue = this.store.getItem(name) !== false;
     var self = this;
-    var button = $("<a href='javascript:void(0)'></a>").addClass("action toggle").html(currentValue?falseHtml:truthHtml).addClass(currentValue?"on":"off");
+    var icon = $("<i></i>").toggleClass("icon-ok", currentValue).toggleClass("icon-remove", !currentValue);
+    var url = chrome.extension.getURL("images/glyphicons-halflings.png");
+    icon[0].style.backgroundImage = 'url("'+ url +'")';
+    var span = $("<span></span>").html(currentValue?falseHtml:truthHtml);
+    var button = $("<a href='javascript:void(0)'></a>").addClass("action toggle").append(icon).append(span);
     button.click(function () {
-        $(this).html(currentValue?truthHtml:falseHtml).addClass(currentValue?"on":"off");
+        span.html(currentValue?truthHtml:falseHtml).addClass(currentValue?"on":"off");
         currentValue = !currentValue;
+        icon.toggleClass("icon-ok", currentValue).toggleClass("icon-remove", !currentValue);
         self.store.setItem(name, currentValue);
         onChangeCallback();
     });
@@ -19,11 +24,11 @@ gimply.prototype._toggleButton = function(name, truthHtml, falseHtml, onChangeCa
 gimply.prototype.showUpdates = function () {
     var self = this;
 
-    this._showCommits = this._toggleButton("showCommits", "Show Commits", "Hide Commits", this.filterEvents.bind(this));
-    this._showIssues = this._toggleButton("showIssues", "Show Issues", "Hide Issues", this.filterEvents.bind(this));
-    this._showUpdates = this._toggleButton("showStatus", "Show Updates", "Hide Updates", this.filterEvents.bind(this));
+    this._showCommits = this._toggleButton("showCommits", "Show Commits", "Show Commits", this.filterEvents.bind(this));
+    this._showIssues = this._toggleButton("showIssues", "Show Issues", "Show Issues", this.filterEvents.bind(this));
+    this._showUpdates = this._toggleButton("showStatus", "Show Updates", "Show Updates", this.filterEvents.bind(this));
 
-    var actionBar = $("<div></div>").addClass("right actionBar").append(this._showCommits).append(this._showIssues).append(this._showUpdates);
+    var actionBar = $("<div></div>").addClass("right actionBar").append(this._showUpdates).append(this._showIssues).append(this._showCommits);
     $("#gimply_updates_container").append(actionBar);
 
     this.contributors = new ListWidget("contributors", "#gimply_updates_container");
