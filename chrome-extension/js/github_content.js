@@ -1,6 +1,18 @@
 "use strict";
 
 function gimply() {
+    var repoName = this.getCurrentRepoName();
+    this.store = {
+        getItem: function(key){
+            var obj = JSON.parse(localStorage.getItem(repoName) || "{}");
+            return obj[key];
+        },
+        setItem: function(key, value){
+            var obj = JSON.parse(localStorage.getItem(repoName) || "{}");;
+            obj[key] = value;
+            localStorage.setItem(repoName, JSON.stringify(obj));
+        }
+    }
     this.init_events();
     this.init_ui();
 }

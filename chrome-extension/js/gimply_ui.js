@@ -1,20 +1,29 @@
 "use strict";
 
+gimply.prototype._toggleButton = function(name, truthHtml, falseHtml, onChangeCallback){
+    var currentValue = this.store.getItem(name) !== false;
+    var self = this;
+    var button = $("<a href='javascript:void(0)'></a>").addClass("action toggle").html(currentValue?falseHtml:truthHtml).addClass(currentValue?"on":"off");
+    button.click(function () {
+        $(this).html(currentValue?truthHtml:falseHtml).addClass(currentValue?"on":"off");
+        currentValue = !currentValue;
+        self.store.setItem(name, currentValue);
+        onChangeCallback();
+    });
+    button.isOn = function(){
+        return currentValue;
+    }
+    return button;
+}
+
 gimply.prototype.showUpdates = function () {
     var self = this;
-    this._showCommits = true;
-    var toggleCommits = $("<a href='javascript:void(0)'></a>").addClass("action toggle").html("Hide Commits");
-    toggleCommits.click(function () {
-        if ($(this).html() === "Hide Commits") {
-            $(this).html("Show Commits");
-            self._showCommits = false;
-        } else {
-            $(this).html("Hide Commits");
-            self._showCommits = true;
-        }
-        self.filterEvents();
-    });
-    var actionBar = $("<div></div>").addClass("right actionBar").append(toggleCommits);
+
+    this._showCommits = this._toggleButton("showCommits", "Show Commits", "Hide Commits", this.filterEvents.bind(this));
+    this._showIssues = this._toggleButton("showIssues", "Show Issues", "Hide Issues", this.filterEvents.bind(this));
+    this._showUpdates = this._toggleButton("showStatus", "Show Updates", "Hide Updates", this.filterEvents.bind(this));
+
+    var actionBar = $("<div></div>").addClass("right actionBar").append(this._showCommits).append(this._showIssues).append(this._showUpdates);
     $("#gimply_updates_container").append(actionBar);
 
     this.contributors = new ListWidget("contributors", "#gimply_updates_container");
@@ -163,11 +172,11 @@ gimply.prototype.addEvents = function (events) {
 gimply.prototype.shouldRenderEvent = function (event) {
     switch (event.type) {
         case "IssuesEvent":
-            return event.payload.action === "closed" || event.payload.action === "reopened";
+            return this._showIssues.isOn() && (event.payload.action === "closed" || event.payload.action === "reopened");
         case "PushEvent":
-            return this._showCommits;
+            return this._showCommits.isOn();
         case "StatusUpdateEvent":
-            return true;
+            return this._showUpdates.isOn();
         default:
             return false;
     }

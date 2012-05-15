@@ -140,14 +140,14 @@
 
 
 #gimply_updates_container .actionBar {
-    text-align: right;
     position: absolute;
     right: 0;
     top: 0;
 }
-#gimply_updates_container .actionBar * {
+#gimply_updates_container .actionBar a {
+    display: block;
     padding: 2px 8px;
-    margin: 0 4px;
+    margin: 4px;
     cursor: pointer;
     font-family: arial;
     font-size: 11px;
