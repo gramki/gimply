@@ -27,7 +27,11 @@ gimply.prototype.addUpdatesInput = function(){
     this.updateBox.on('cancel', function () {
         self.hideUpdateInput();
     });
-    this.hideUpdateInput();
+    if(this.isUpdatesTabToPost()){
+        this.showUpdateInput();
+    }else{
+        this.hideUpdateInput();
+    }
     this.onRepoStatusUpdate();
 }
 

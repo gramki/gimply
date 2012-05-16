@@ -55,6 +55,10 @@ gimply.prototype._removeGithubElements = function(){
 gimply.prototype.isUpdatesTab = function(){
     return (window.location.href.indexOf("#gimply_updates") > 0);
 }
+gimply.prototype.isUpdatesTabToPost = function(){
+    return (window.location.href.indexOf("#gimply_updates_post") > 0);
+}
+
 
 gimply.prototype.onUpdatesTabSelect = function(){
     this._removeGithubElements();
