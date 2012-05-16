@@ -80,6 +80,10 @@
     user-select: all;
 }
 
+#updates_container.multi-contributor li:not(.contributor-entry) > div:not(.date) {
+    margin-left: 35px;
+}
+
 #updates_container .date {
     font-size: 1.3em;
     font-weight: bold;
@@ -88,18 +92,30 @@
     margin-bottom: -4px;
 }
 
-#updates_container .contributor {
-    display: none;
-    padding-right: 2em;
+#updates_container li.contributor-entry {
+    position: relative;
+    margin-bottom: -8px;
+    margin-top: 5px;
 }
 
-#updates_container .contributor img {
-    height: 1em;
-    width: 1em;
+#updates_container li.contributor-entry .contributor {
+    position: absolute;
+    width: 45px;
+    text-align: center;
+    overflow: hidden;
+}
+#updates_container li.contributor-entry .contributor .name {
+    display: block;
+    max-width: 45px;
+    text-overflow: ellipsis;
+    font-size: 11px;
+    color: #bbb;
+    white-space: nowrap;
 }
 
-#updates_container .contributor .name {
-    display: none;
+#updates_container li.contributor-entry .contributor img {
+    height: 25px;
+    width: 25px;
 }
 
 #updates_container .update {
@@ -247,18 +263,19 @@
     color: #888;
 }
 #updates_container .update-type {
-    margin: 0 3px 0 0;
+    margin: 0;
     display: inline-block;
     font-family: arial;
     padding: 0;
     text-align: left;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: normal;
 }
 #updates_container span.update-type:first-letter{
     text-transform: capitalize;
 }
 #updates_container .update-header .contributor-name {
+    display: none;
     text-transform: capitalize;
     margin-right: 4px;
 }

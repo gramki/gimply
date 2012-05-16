@@ -110,6 +110,8 @@ gimply.prototype.addEvents = function (events) {
     var self = this;
 
     var isMultiUser = this.contributors.selected.length > 1 || _(this.contributors.selected).include("*");
+    $(updateList.container).toggleClass("multi-contributor", isMultiUser);
+
 
     function _merge (mergeTo, event){
         switch(event.type){
@@ -162,12 +164,14 @@ gimply.prototype.addEvents = function (events) {
             //suffixed by contributor login
             //suffixed by event type
             return "" + (999000 + _.day_diff(today, event.created_at)) +  event.actor.login.toLowerCase() + typesOrder.indexOf(event.type);
-        }).tap(function(list){
-            console.warn("Sorted List:", list);
         }).each(
         function (event) {
             if (!lastEvent || !_.same_day(lastEvent.created_at, event.created_at)) {
                 updateList.add(self.dateToHtml(event.created_at));
+            }
+            if( isMultiUser && (!lastEvent || lastEvent.actor.login !== event.login || !_.same_day(lastEvent.created_at, event.created_at)) ){
+                var entry = updateList.add(_.git_contributor(event.actor));
+                entry.addClass("contributor-entry");
             }
             lastEvent = event;
             updateList.add(self.toHtml(event, isMultiUser));

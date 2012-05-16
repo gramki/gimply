@@ -88,6 +88,7 @@ ListWidget.prototype.add = function (innerHTML, id, value) {
         }
         this._throttledDefaultSelector();
     }
+    return li;
 }
 ListWidget.prototype.empty = function () {
     $(this.container).empty();
