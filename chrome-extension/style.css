@@ -106,7 +106,8 @@
 }
 #updates_container li.contributor-entry .contributor .name {
     display: block;
-    max-width: 45px;
+    max-width: 50px;
+    overflow: hidden;
     text-overflow: ellipsis;
     font-size: 11px;
     color: #bbb;

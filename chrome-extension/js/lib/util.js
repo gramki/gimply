@@ -102,7 +102,7 @@ _.mixin({
         var div = $("<div></div>").addClass("contributor");
         var img = $("<img/>").attr("src", contributor.avatar_url).attr("width", 25).attr("height", 25);
         var name = $("<span></span>").addClass("name").html(contributor.login);
-        return div.append(img).append(name);
+        return div.append(img).append(name).attr('title', contributor.login);
     }
 });
 
