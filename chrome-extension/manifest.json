@@ -33,5 +33,5 @@
         "page":"index.html"
     },
     "permissions":["https://api.github.com/", "https://gimply.herokuapp.com/", "unlimitedStorage", "notifications"],
-    "version":"0.0.3"
+    "version":"0.0.4"
 }
