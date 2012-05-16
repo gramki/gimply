@@ -36,7 +36,7 @@
     margin: 2px 0;
 }
 
-#contributors li:hover {
+#contributors li:hover, #contributors li.ui-selecting {
     background-color: #AA8DE2;
     color: white;
     border-radius: 6px;
