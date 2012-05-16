@@ -69,11 +69,14 @@ _.mixin({
         //Converts git message to html
         msg = msg.replace(/\r?\n/g, "<br/>");
         try {
-            var matches = msg.match(/\W?[0-9a-f]{5,50}\W?/g);
+            var matches = [];
+            var r = /\W?([0-9a-f]{5,50})\W?/g, result;
+            while(null !== (result = r.exec(msg))){
+                matches.push(result[1]);
+            }
             _.chain(matches).uniq().filter(function(txt){
                 return !!txt.match(/[0-9]+/);
             }).each(function(sha){
-                    sha = $.trim(sha);
                     msg = msg.replace(new RegExp(sha, "g"), _.sha_html(sha, repoName)[0].outerHTML);
                 });
             matches = msg.match(/#[0-9]+/g);
