@@ -119,8 +119,43 @@ Repository.prototype.addEvent = function (event) {
         case "IssueCommentEvent":
             this._convertCommentToUpdate(event);
             break;
+        case "PushEvent":
+            this._convertShasToCommits(event);
+            break;
     }
     return true;
+}
+Repository.prototype._convertShasToCommits = function(event){
+    if(event.payload.commits || !event.payload.shas){
+        return;
+    }
+
+    //Unlike what the documentation says (http://developer.github.com/v3/events/types/#pushevent)
+    //the PushEvent may have shas[] instead of commits array.
+    //The following is an example of the payload with shas[].
+    //
+    // payload: Object
+    //      head: "5ec953a01efea2ac90fd39b9f75df699ef0cf301"
+    //      push_id: 45087033
+    //      ref: "refs/heads/master"
+    //      shas: Array[1]
+    //          0: Array[4]
+    //              0: "5ec953a01efea2ac90fd39b9f75df699ef0cf301"
+    //              1: "anup@quantumdataengines.com"
+    //              2: "upgraded version to 0.0.26"
+    //              3: "Anup Kalbalia"
+    //             length: 4
+
+    event.payload.commits = _(event.payload.shas).map(function(shaEntry){
+        return {
+            author:{
+                email:shaEntry[1],
+                name:shaEntry[3]
+            },
+            message:shaEntry[2],
+            sha:shaEntry[0]
+        }
+    });
 }
 
 Repository.prototype._convertCommentToUpdate = function(event){
