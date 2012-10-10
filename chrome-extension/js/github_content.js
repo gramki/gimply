@@ -32,24 +32,26 @@ gimply.prototype.init_ui = function () {
 gimply.prototype._removeGithubElements = function(){
     $("a.selected").removeClass("selected");
     $("#gimply_updates_tab a").addClass("selected");
-    var pagehead = $(".pagehead")[0];
-    var container = pagehead.parentNode;
+    var pagehead = $(".pagehead")[0],
+        parent = pagehead.parentNode,
+        container = $(".pagehead .container")[0],
+        actions = $(".title-actions-bar", container)[0],
+        tabs = $(".tabs", container)[0];
 
     $(pagehead).detach();
-    $(container).empty();
-    $(container).append(pagehead);
-    var actions = $(".title-actions-bar", pagehead)[0];
-    var tabs = $(".tabs", pagehead)[0];
+    $(parent).empty();
+    $(parent).append(pagehead);
     $(tabs).detach();
     $(actions).detach();
-    $(pagehead).empty();
-    $(pagehead).append(actions);
-    $(pagehead).append(tabs);
+    $(container).empty();
+    $(container).append(actions);
+    $(container).append(tabs);
 
-    $(container).append("<div id='gimply_updates_input'></div>");
-    $(container).append("<div id='gimply_updates_container'></div>");
+    $(container).append("<div id='gimply_stuff' class='gimply'></div>");
+    $("#gimply_stuff").append("<div id='gimply_updates_input'></div>");
+    $("#gimply_stuff").append("<div id='gimply_updates_container'></div>");
 
-}
+};
 
 
 gimply.prototype.isUpdatesTab = function(){

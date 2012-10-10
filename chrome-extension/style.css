@@ -1,13 +1,17 @@
-#gimply_updates_container {
+#gimply_stuff.gimply {
+    margin-top: 24px;
+}
+
+.gimply #gimply_updates_container {
     position: relative;
 }
-#gimply_updates_container li {
+.gimply #gimply_updates_container li {
     font-family: Helvetica, arial, freesans, clean, sans-serif;
     padding: 4px 8px;
     border-raidus: 5px;
 }
 
-#contributors {
+.gimply #contributors {
     float: left;
     width: 170px;
     overflow-x: hidden;
@@ -18,17 +22,17 @@
     min-height: 150px;
     max-height: 450px;
 }
-#gimply_promo {
+.gimply #gimply_promo {
     position: absolute;
     left: 0;
     top: 455px;
     padding-left: 5px;
 }
-#gimply_promo img {
+.gimply #gimply_promo img {
     height: 20px;
     cursor: pointer;
 }
-#contributors li {
+.gimply #contributors li {
     font-family: Helvetica, arial, freesans, clean, sans-serif;
     font-size: 14px;
     color: #333;
@@ -36,35 +40,35 @@
     margin: 2px 0;
 }
 
-#contributors li:hover, #contributors li.ui-selecting {
+.gimply #contributors li:hover, #contributors li.ui-selecting {
     background-color: #AA8DE2;
     color: white;
     border-radius: 6px;
 }
 
-#contributors .ui-selected {
+.gimply #contributors .ui-selected {
     background-color: #924bb8;
     color: white;
     border-radius: 6px;
 }
 
-#gimply_updates_input .right, #gimply_updates_container .right {
+.gimply #gimply_updates_input .right, #gimply_updates_container .right {
     float: none;
     margin-left: 170px;
     padding-left: 1em;
 }
-#gimply_updates_input {
+.gimply #gimply_updates_input {
     position: relative;
     margin-top: -15px;
     min-height: 2em;
     margin-bottom: 5px;
 }
-#gimply_updates_input.active {
+.gimply #gimply_updates_input.active {
     padding-bottom: 15px;
     padding-top: 10px;
     border-bottom: 1px dotted #ccc;
 }
-#post_update_action{
+.gimply #post_update_action{
     position: absolute;
     left: 0;
     top: 0;
@@ -75,16 +79,16 @@
     color: #8a3eb0;
 }
 
-#updates_container {
+.gimply #updates_container {
     list-style-type: none;
     user-select: all;
 }
 
-#updates_container.multi-contributor li:not(.contributor-entry) > div:not(.date) {
+.gimply #updates_container.multi-contributor li:not(.contributor-entry) > div:not(.date) {
     margin-left: 35px;
 }
 
-#updates_container .date {
+.gimply #updates_container .date {
     font-size: 1.3em;
     font-weight: bold;
     color: #555;
@@ -92,19 +96,19 @@
     margin-bottom: -4px;
 }
 
-#updates_container li.contributor-entry {
+.gimply #updates_container li.contributor-entry {
     position: relative;
     margin-bottom: -8px;
     margin-top: 5px;
 }
 
-#updates_container li.contributor-entry .contributor {
+.gimply #updates_container li.contributor-entry .contributor {
     position: absolute;
     width: 45px;
     text-align: center;
     overflow: hidden;
 }
-#updates_container li.contributor-entry .contributor .name {
+.gimply #updates_container li.contributor-entry .contributor .name {
     display: block;
     max-width: 50px;
     overflow: hidden;
@@ -114,54 +118,54 @@
     white-space: nowrap;
 }
 
-#updates_container li.contributor-entry .contributor img {
+.gimply #updates_container li.contributor-entry .contributor img {
     height: 25px;
     width: 25px;
 }
 
-#updates_container .update {
+.gimply #updates_container .update {
     margin-bottom: 4px;
     padding-left: 15px;
 }
 
-#updates_container .commit, #updates_container .issue-entry{
+.gimply #updates_container .commit, #updates_container .issue-entry{
     height: 1.5em;
     /*padding-left: 15px;*/
 }
-#updates_container .commit, #updates_container .issue-entry {
+.gimply #updates_container .commit, #updates_container .issue-entry {
     overflow: hidden;
     cursor: pointer;
 }
 
-#updates_container .commit-message:hover, #updates_container .issue-title:hover {
+.gimply #updates_container .commit-message:hover, #updates_container .issue-title:hover {
     color: #4183C4;
     cursor: pointer;
 }
 
-.commit .commit-sha {
+.gimply .commit .commit-sha {
     display: none;
 }
-#updates_container .commit .sha, .issue-entry .issue-number a, .push-details .branch-name a {
+.gimply #updates_container .commit .sha, .issue-entry .issue-number a, .push-details .branch-name a {
     padding: 0 2px;
     font-size: 11px;
     color: #af72db;
 }
-.commit .sha, .issue-entry .issue-number a {
+.gimply .commit .sha, .issue-entry .issue-number a {
     margin: 0 4px;
     border: 1px dotted #af72db;
     border-radius: 4px;
 }
-#updates_container .update .time {
+.gimply #updates_container .update .time {
     display: none;
 }
 
 
-#gimply_updates_container .actionBar {
+.gimply #gimply_updates_container .actionBar {
     position: absolute;
     right: -80px;
     top: 0;
 }
-#gimply_updates_container .actionBar a {
+.gimply #gimply_updates_container .actionBar a {
     display: block;
     padding: 2px 8px;
     margin: 4px;
@@ -171,10 +175,10 @@
     color: #bbb;
     border-radius: 6px;
 }
-#gimply_updates_container .actionBar a:hover {
+.gimply #gimply_updates_container .actionBar a:hover {
     background-color: #E5E5E5;
 }
-#gimply_updates_container .actionBar a span {
+.gimply #gimply_updates_container .actionBar a span {
     font-size: 12px;
     display: inline-block;
     margin-left: 4px;
@@ -182,8 +186,8 @@
     bottom: 2px;
 }
 
-[class^="icon-"],
-[class*=" icon-"] {
+.gimply [class^="icon-"],
+.gimply [class*=" icon-"] {
     display: inline-block;
     width: 14px;
     height: 14px;
@@ -195,37 +199,37 @@
     background-repeat: no-repeat;
 }
 
-.icon-ok {
+.gimply .icon-ok {
     background-position: -288px 0;
 }
 
-.icon-remove {
+.gimply .icon-remove {
     background-position: -312px 0;
 }
 
 
-#update_box_container {
+.gimply #update_box_container {
     margin-top: -10px;
 }
-#update_input {
+.gimply #update_input {
     padding: 8px;
     padding-bottom: 3px;
     position: relative;
     margin-right: 5px;
     margin-top: 5px;
 }
-#update_input .cancel {
+.gimply #update_input .cancel {
     position: absolute;
     top: 0;
     right: 8px;
     font-size: 10px;
     color: #888;
 }
-#update_input textarea {
+.gimply #update_input textarea {
     display: inline-block;
     border: #ddd 1px solid;
 }
-#update_input button {
+.gimply #update_input button {
     display: inline-block;
     margin: 0 5px;
     margin-right: 25px;
@@ -235,13 +239,13 @@
     cursor: pointer;
 }
 
-#oauth .button {
+.gimply #oauth .button {
     font-size: 15px;
     color: white;
     font-family: arial;
 }
 
-#oauth, #gimply_enabler {
+.gimply #oauth, #gimply_enabler {
     text-align: center;
     font-size: 17px;
     font-family: cambria, arial;
@@ -250,12 +254,12 @@
     line-height: 1.3em;
 }
 
-#oauth .logo {
+.gimply #oauth .logo {
     height: 100px;
     margin-bottom: 15px;
 }
 
-#updates_container .update-header {
+.gimply #updates_container .update-header {
     max-width: 500px;
     margin-bottom: 4px;
     background: -webkit-gradient(linear, left bottom, right bottom, from(#EBEBEB), to(white));
@@ -263,7 +267,7 @@
     padding-left: 4px;
     color: #888;
 }
-#updates_container .update-type {
+.gimply #updates_container .update-type {
     margin: 0;
     display: inline-block;
     font-family: arial;
@@ -272,29 +276,29 @@
     font-size: 11px;
     font-weight: normal;
 }
-#updates_container span.update-type:first-letter{
+.gimply #updates_container span.update-type:first-letter{
     text-transform: capitalize;
 }
-#updates_container .update-header .contributor-name {
+.gimply #updates_container .update-header .contributor-name {
     display: none;
     text-transform: capitalize;
     margin-right: 4px;
 }
 /*
-#updates_container .update-type.pushed{
+.gimply #updates_container .update-type.pushed{
     background-color: #C6AAE2;
 }
-#updates_container .update-type.reopened {
+.gimply #updates_container .update-type.reopened {
     background-color: #EDC795;
 }
-#updates_container .update-type.closed{
+.gimply #updates_container .update-type.closed{
     background-color: #b5d991;
 }
-#updates_container .update-type.status{
+.gimply #updates_container .update-type.status{
     background-color: CornflowerBlue;
 }
 */
-#loading {
+.gimply #loading {
     position: absolute;
     left: 200px;
     top: 15px;
@@ -305,7 +309,7 @@
 /********************
 button
 *********************/
-.button, #update_box_container a.button  {
+.gimply .button, #update_box_container a.button  {
     display: inline-block;
     zoom: 1; /* zoom and *display = ie7 hack for display:inline-block */
     *display: inline;
@@ -325,19 +329,19 @@ button
     -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
     box-shadow: 0 1px 2px rgba(0,0,0,.2);
 }
-.button:hover {
+.gimply .button:hover {
     text-decoration: none;
 }
-.button:active {
+.gimply .button:active {
     position: relative;
     top: 1px;
 }
-.medium {
+.gimply .medium {
     font-size: 12px;
     padding: .4em 1.5em .42em;
 }
 
-.green {
+.gimply .green {
     color: #e8f0de;
     border: solid 1px #538312;
     background: #64991e;
@@ -345,27 +349,27 @@ button
     background: -moz-linear-gradient(top,  #7db72f,  #4e7d0e);
     filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#7db72f', endColorstr='#4e7d0e');
 }
-.green:hover {
+.gimply .green:hover {
     background: #538018;
     background: -webkit-gradient(linear, left top, left bottom, from(#6b9d28), to(#436b0c));
     background: -moz-linear-gradient(top,  #6b9d28,  #436b0c);
     filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#6b9d28', endColorstr='#436b0c');
 }
-.green:active {
+.gimply .green:active {
     color: #a9c08c;
     background: -webkit-gradient(linear, left top, left bottom, from(#4e7d0e), to(#7db72f));
     background: -moz-linear-gradient(top,  #4e7d0e,  #7db72f);
     filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#4e7d0e', endColorstr='#7db72f');
 }
 
-.logo-color {
+.gimply .logo-color {
     background: -webkit-gradient( linear, left bottom, left top, color-stop(0.1,#8908D4), color-stop(0.55,#AD5EDB), color-stop(0.78, #B963EB));
     color: white;
     font-family: arial;
     font-size: 15px;
     margin-top: 25px;
 }
-.logo-color:hover {
+.gimply .logo-color:hover {
     background: -webkit-gradient(
         linear,
         left bottom,
@@ -377,20 +381,20 @@ button
 }
 
 
-#update_input .wrapper.buttonWrapper {
+.gimply #update_input .wrapper.buttonWrapper {
     padding-bottom: 5px;
     padding-left: 8px;
 }
-#update_input .wrapper {
+.gimply #update_input .wrapper {
     display: table-cell;
     vertical-align: bottom;
 }
-#update_box_container {
+.gimply #update_box_container {
     background: -webkit-linear-gradient(top,  white 0%, #E5E5E5 100%);
     border: #DDD solid 1px;
     border-radius: 5px;
 }
-#update_input .hint {
+.gimply #update_input .hint {
     font-size: 8px;
     color: #888;
     font-style: italic;
@@ -398,28 +402,28 @@ button
     height: 8px;
 }
 
-#gimply_enabler {
+.gimply #gimply_enabler {
     padding: 25px 2px;
 }
 
-#gimply_enabler .title {
+.gimply #gimply_enabler .title {
     color: #555;
     font-size: 25px;
     margin-bottom: 25px;
     margin-top: 5px;
 }
 
-#gimply_enabler .how {
+.gimply #gimply_enabler .how {
     margin: 24px 0;
     font-family: arial;
     font-size: 13px;
     line-height: 18px;
 }
-#gimply_enabler .what {
+.gimply #gimply_enabler .what {
     font-family: arial;
     margin-top: 45px;
     font-size: 16px;
 }
-#gimply_enabler .em {
+.gimply #gimply_enabler .em {
     color: #924bb8;
 }
