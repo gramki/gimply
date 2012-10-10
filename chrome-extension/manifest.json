@@ -33,5 +33,14 @@
         "page":"index.html"
     },
     "permissions":["https://api.github.com/", "https://gimply.herokuapp.com/", "unlimitedStorage", "notifications"],
-    "version":"0.0.5"
+    "version":"1.0",
+    "manifest_version": 2,
+    "web_accessible_resources": [
+        "images/gimply_logo_small.png",
+        "images/glyphicons-halflings.png",
+        "images/loading.gif",
+        "images/gimply_logo.png",
+        "images/gimply128.png",
+        "style.css"
+    ]
 }
