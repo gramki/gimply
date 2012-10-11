@@ -262,7 +262,8 @@ Repository.prototype.filterEvents = function(filter){
 }
 
 Repository.prototype.addContributor = function(contributor){
-    this.contributors[contributor.login] = contributor;
+    var login = contributor.login;
+    this.contributors[login] = _(this.contributors[login]||{}).extend(contributor);
     this.github.raise("contributor", [contributor, this.name]);
 };
 
